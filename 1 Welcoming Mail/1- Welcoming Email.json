@@ -85,7 +85,7 @@
     },
     {
       "parameters": {
-        "sendTo": "abdelrahamankanakrik@gmail.com",
+        "sendTo": "NewMemeber@organization_domain",
         "subject": "New Member Added",
         "message": "=New memeber has been added\n{{ $json['First Name'] }} {{ $json['Last Name']}} <br>\n{{ $json.Email }}  <br>\n{{ $json['Phone Number'] }} <br>",
         "options": {}
