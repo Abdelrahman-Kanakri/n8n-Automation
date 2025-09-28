@@ -78,7 +78,7 @@
       "webhookId": "f1f77137-3350-47db-a72a-a9ebc86eb148",
       "credentials": {
         "gmailOAuth2": {
-          "id": "9MU68HBF118zmkkL",
+          "id": "YOUR_CREDENTIAL",
           "name": "Gmail account"
         }
       }
@@ -101,7 +101,7 @@
       "webhookId": "03951001-91ea-4af3-b8c5-8b6da70414c4",
       "credentials": {
         "gmailOAuth2": {
-          "id": "9MU68HBF118zmkkL",
+          "id": "YOUR_CREDENTIAL",
           "name": "Gmail account"
         }
       }
@@ -186,7 +186,7 @@
       "name": "Append row in sheet",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "s31y9wde8YyCl8PY",
+          "id": "YOUR_CREDENTIAL",
           "name": "Google Sheets account"
         }
       }
