@@ -65,7 +65,7 @@ This n8n workflow is designed to manage new customer registrations. It is trigge
 | Parameter    | Value/Configuration                                                                 | Notes                                        |
 |--------------|-------------------------------------------------------------------------------------|----------------------------------------------|
 | **Credentials** | Gmail account (`YOUR_CREDENTIALS`)                                                    | Uses the same Gmail credential.              |
-| **Send To**     | `abdelrahamankanakrik@gmail.com`                                                    | Hardcoded internal recipient for notification. |
+| **Send To**     | `Customer Email@organization_Domain`                                                    | Hardcoded internal recipient for notification. |
 | **Subject**     | `New Member Added`                                                                 |                                              |
 | **Message**     | `=New member has been added\n{{ $json['First Name'] }} {{ $json['Last Name']}} <br>\n{{ $json.Email }} <br>\n{{ $json['Phone Number'] }} <br>` | Contains all critical new user data for immediate review. |
 
