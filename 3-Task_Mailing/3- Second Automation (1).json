@@ -1,0 +1,253 @@
+{
+  "name": "Second Automation",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7,
+              "triggerAtMinute": 50
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -32,
+        -48
+      ],
+      "id": "09667096-c54d-476f-b982-4a5264a50469",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "sendTo": "abdelrahamankanakrik@gmail.com",
+        "subject": "New Task",
+        "message": "=You have to do the following:<br>\n{{ $json.emailBody }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        496,
+        -160
+      ],
+      "id": "8d6fdf7e-59b6-49fe-a77e-0905050215f4",
+      "name": "Send a message",
+      "webhookId": "7113a72b-0dcf-43f1-8243-a971a8f67a69",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "9MU68HBF118zmkkL",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "17Iax4lpo8yAMi7GmC0SpNp_KOVomZvlKDsgxNNq6aHY",
+          "mode": "list",
+          "cachedResultName": "Task Spongbob ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Iax4lpo8yAMi7GmC0SpNp_KOVomZvlKDsgxNNq6aHY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Iax4lpo8yAMi7GmC0SpNp_KOVomZvlKDsgxNNq6aHY/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        160,
+        -160
+      ],
+      "id": "1f20452b-450a-4907-ac25-e4d80f96456c",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "s31y9wde8YyCl8PY",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "language": "python",
+        "pythonCode": "rows = []\n\nfor item in _input.all():\n  row_number = item.json.get(f\"row_number\", \"\")\n  task = item.json.get(f\"Task \", \"\")\n  time = item.json.get(f\"Time \", \"\")\n\n  rows.append(f\"{row_number} | {task} | {time} \\n\")\n\n\nemailBody = \"<br>\".join(rows)\n\n# return as a single item\nreturn [{\n    \"json\": {\n        \"emailBody\": emailBody\n    }\n}]"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        336,
+        -160
+      ],
+      "id": "9599d602-8cf0-443c-8e36-57c21ef7bcff",
+      "name": "Code in Python (Beta)"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "823e3117-37d4-4f47-934a-f19b3c92e8fc",
+              "name": "All Tasks",
+              "value": "={{ $items().map(item => item.json.row_number + \". \" + item.json[\"Task \"] + \" at \" + item.json[\"Time \"]).join(\"<br>\") }}\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        336,
+        16
+      ],
+      "id": "1257d5b5-4bab-4521-a4ac-edb8bdb81aea",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "17Iax4lpo8yAMi7GmC0SpNp_KOVomZvlKDsgxNNq6aHY",
+          "mode": "list",
+          "cachedResultName": "Task Spongbob ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Iax4lpo8yAMi7GmC0SpNp_KOVomZvlKDsgxNNq6aHY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Iax4lpo8yAMi7GmC0SpNp_KOVomZvlKDsgxNNq6aHY/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        160,
+        16
+      ],
+      "id": "de890dcb-186c-44cb-90af-b3614f413242",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "s31y9wde8YyCl8PY",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "abdelrahamankanakrik@gmail.com",
+        "subject": "New Task",
+        "message": "=You have to do the following:<br>\n{{ $json['All Tasks'] }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        512,
+        16
+      ],
+      "id": "374aa0e8-c8a2-408d-bf8b-624239c78b42",
+      "name": "Send a message1",
+      "webhookId": "7113a72b-0dcf-43f1-8243-a971a8f67a69",
+      "executeOnce": true,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "9MU68HBF118zmkkL",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in Python (Beta)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in Python (Beta)": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c9a936b7-6c02-4cdc-9dd4-0e890b847252",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d582c6d9abbb88f361ce5586df1bb470a0ec28834901a8c3ab1164fc8a54753e"
+  },
+  "id": "v2GaYAQRZecbry0A",
+  "tags": []
+}

@@ -1,0 +1,359 @@
+{
+  "name": "Mail Sending to separate employeer",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 7,
+              "triggerAtMinute": 50
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -128,
+        -48
+      ],
+      "id": "f304c9a2-559b-4a3b-9ce9-dcbaeae8584b",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "sendTo": "abdelrahamankanakrik@gmail.com",
+        "subject": "New Task",
+        "message": "=You have to do the following:<br>\n{{ $json['All Tasks'] }}\n<br>\nShafee",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        560,
+        -176
+      ],
+      "id": "1ae9259f-75cc-470d-a05d-25505fa15aa0",
+      "name": "Send a message",
+      "webhookId": "e0e4554e-ab64-4584-ab4b-67f27782c746",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "9MU68HBF118zmkkL",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "17Iax4lpo8yAMi7GmC0SpNp_KOVomZvlKDsgxNNq6aHY",
+          "mode": "list",
+          "cachedResultName": "Task Spongbob ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Iax4lpo8yAMi7GmC0SpNp_KOVomZvlKDsgxNNq6aHY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Iax4lpo8yAMi7GmC0SpNp_KOVomZvlKDsgxNNq6aHY/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        80,
+        -176
+      ],
+      "id": "c587a659-0c82-45c5-af0a-afc1a9db154c",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "s31y9wde8YyCl8PY",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "823e3117-37d4-4f47-934a-f19b3c92e8fc",
+              "name": "All Tasks",
+              "value": "={{ $items().map(item => item.json.row_number + \". \" + item.json[\"Task \"] + \" at \" + item.json[\"Time \"]).join(\"<br>\") }}\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        16
+      ],
+      "id": "a37cd7ca-0b88-4260-94cf-7c720732a02a",
+      "name": "Edit Fields",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "17Iax4lpo8yAMi7GmC0SpNp_KOVomZvlKDsgxNNq6aHY",
+          "mode": "list",
+          "cachedResultName": "Task Spongbob ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Iax4lpo8yAMi7GmC0SpNp_KOVomZvlKDsgxNNq6aHY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Iax4lpo8yAMi7GmC0SpNp_KOVomZvlKDsgxNNq6aHY/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        80,
+        16
+      ],
+      "id": "d2764915-21e7-4c5e-9583-ce191f0bff6f",
+      "name": "Get row(s) in sheet1",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "s31y9wde8YyCl8PY",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "abdelrahamankanakrik@gmail.com",
+        "subject": "New Task",
+        "message": "=You have to do the following:<br>\n{{ $json['All Tasks'] }}\n<br>\nSpong",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        560,
+        16
+      ],
+      "id": "7fb60e84-dce6-4ba6-b672-b31014d24479",
+      "name": "Send a message1",
+      "webhookId": "f2acf05b-6b8d-4200-8524-390e0ec5b053",
+      "executeOnce": false,
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "9MU68HBF118zmkkL",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "823e3117-37d4-4f47-934a-f19b3c92e8fc",
+              "name": "All Tasks",
+              "value": "={{ $items().map(item => item.json.row_number + \". \" + item.json[\"Task \"] + \" at \" + item.json[\"Time \"]).join(\"<br>\") }}\n",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        416,
+        -176
+      ],
+      "id": "9f271f2a-5907-4105-bcdb-51489a462648",
+      "name": "Edit Fields1",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a579dabc-e4c1-4c25-8ff2-7e4f8160f5ea",
+              "leftValue": "={{ $json['Assigned to'] }}",
+              "rightValue": "Shafee",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        256,
+        -176
+      ],
+      "id": "7a838a09-206e-4672-bddb-4d2462e728df",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "a579dabc-e4c1-4c25-8ff2-7e4f8160f5ea",
+              "leftValue": "={{ $json['Assigned to'] }}",
+              "rightValue": "Spong",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.2,
+      "position": [
+        256,
+        16
+      ],
+      "id": "4a7f7734-12c9-414b-84a8-35afc70c1c71",
+      "name": "Filter1"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet1": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b00113a8-7443-4d27-b446-7c2019b885e9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d582c6d9abbb88f361ce5586df1bb470a0ec28834901a8c3ab1164fc8a54753e"
+  },
+  "id": "nhkMc7X1iNT37K9A",
+  "tags": []
+}
