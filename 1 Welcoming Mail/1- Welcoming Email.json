@@ -111,10 +111,10 @@
         "operation": "append",
         "documentId": {
           "__rl": true,
-          "value": "1qTSloa8q7t7lBv4pYS0DwWqftY2tSjYT6U19n6BXT-g",
+          "value": "DocumentID",
           "mode": "list",
           "cachedResultName": "n8n file",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qTSloa8q7t7lBv4pYS0DwWqftY2tSjYT6U19n6BXT-g/edit?usp=drivesdk"
+          "cachedResultUrl": "Sheet_Link"
         },
         "sheetName": {
           "__rl": true,
