@@ -1,4 +1,5 @@
 # 3 Task Mailing
+<img width="985" height="416" alt="image" src="https://github.com/user-attachments/assets/8efac49d-beb0-4d6d-b857-0898ab75dfbc" />
 
 
 ## 1. Overview
