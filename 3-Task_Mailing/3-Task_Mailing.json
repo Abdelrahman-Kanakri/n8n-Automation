@@ -41,7 +41,7 @@
       "webhookId": "7113a72b-0dcf-43f1-8243-a971a8f67a69",
       "credentials": {
         "gmailOAuth2": {
-          "id": "9MU68HBF118zmkkL",
+          "id": "YOUR_CREDENTIALS",
           "name": "Gmail account"
         }
       }
@@ -74,7 +74,7 @@
       "name": "Get row(s) in sheet",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "s31y9wde8YyCl8PY",
+          "id": "YOUR_CREDENTIALS",
           "name": "Google Sheets account"
         }
       }
@@ -144,14 +144,14 @@
       "name": "Get row(s) in sheet1",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "s31y9wde8YyCl8PY",
+          "id": "YOUR_CREDENTIALS",
           "name": "Google Sheets account"
         }
       }
     },
     {
       "parameters": {
-        "sendTo": "abdelrahamankanakrik@gmail.com",
+        "sendTo": "youremail@organization.domain",
         "subject": "New Task",
         "message": "=You have to do the following:<br>\n{{ $json['All Tasks'] }}",
         "options": {
@@ -170,7 +170,7 @@
       "executeOnce": true,
       "credentials": {
         "gmailOAuth2": {
-          "id": "9MU68HBF118zmkkL",
+          "id": "YOUR_CREDENTIALS",
           "name": "Gmail account"
         }
       }
