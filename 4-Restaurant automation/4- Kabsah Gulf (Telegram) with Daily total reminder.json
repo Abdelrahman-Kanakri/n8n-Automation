@@ -33,7 +33,7 @@
       "name": "Google Gemini Chat Model",
       "credentials": {
         "googlePalmApi": {
-          "id": "sRapiLHJnkcGznmE",
+          "id": "YOUR_CREDENTIALS",
           "name": "Google Gemini(PaLM) Api account"
         }
       }
@@ -79,7 +79,7 @@
     },
     {
       "parameters": {
-        "sendTo": "abdelrahamankanakrik@gmail.com",
+        "sendTo": "OwnerEmail@gmail.com",
         "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
         "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
         "options": {
@@ -97,7 +97,7 @@
       "webhookId": "17cf0c72-2585-4d89-a360-a081057f5c79",
       "credentials": {
         "gmailOAuth2": {
-          "id": "9MU68HBF118zmkkL",
+          "id": "YOUR_CREDENTIALS",
           "name": "Gmail account"
         }
       }
@@ -181,7 +181,7 @@
       "name": "Orders_Data",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "s31y9wde8YyCl8PY",
+          "id": "YOUR_CREDENTIALS",
           "name": "Google Sheets account"
         }
       }
@@ -205,7 +205,7 @@
       "webhookId": "0f751e51-0d0b-4dff-aba3-0c658d0a90f9",
       "credentials": {
         "telegramApi": {
-          "id": "Xb0O6SUWlclwCXGg",
+          "id": "YOUR_CREDENTIALS",
           "name": "Telegram account"
         }
       }
@@ -228,7 +228,7 @@
       "webhookId": "91b78b4c-d11e-4b69-b18a-f7242c691058",
       "credentials": {
         "telegramApi": {
-          "id": "Xb0O6SUWlclwCXGg",
+          "id": "YOUR_CREDENTIALS",
           "name": "Telegram account"
         }
       }
@@ -261,7 +261,7 @@
       "name": "Get row(s) in sheet in Google Sheets",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "s31y9wde8YyCl8PY",
+          "id": "YOUR_CREDENTIALS",
           "name": "Google Sheets account"
         }
       }
@@ -312,7 +312,7 @@
       "name": "Google Gemini Chat Model1",
       "credentials": {
         "googlePalmApi": {
-          "id": "sRapiLHJnkcGznmE",
+          "id": "YOUR_CREDENTIALS",
           "name": "Google Gemini(PaLM) Api account"
         }
       }
@@ -356,7 +356,7 @@
       "name": "Get row(s) in sheet in Google Sheets1",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "s31y9wde8YyCl8PY",
+          "id": "YOUR_CREDENTIALS",
           "name": "Google Sheets account"
         }
       }
@@ -376,7 +376,7 @@
       "webhookId": "8e34a43c-6535-479c-aa71-7dd29c524dd4",
       "credentials": {
         "gmailOAuth2": {
-          "id": "9MU68HBF118zmkkL",
+          "id": "YOUR_CREDENTIALS",
           "name": "Gmail account"
         }
       }
