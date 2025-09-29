@@ -23,7 +23,7 @@
     },
     {
       "parameters": {
-        "sendTo": "abdelrahamankanakrik@gmail.com",
+        "sendTo": "yourEmail@organizaton.domain",
         "subject": "New Task",
         "message": "=You have to do the following:<br>\n{{ $json['All Tasks'] }}\n<br>\nShafee",
         "options": {
@@ -41,7 +41,7 @@
       "webhookId": "e0e4554e-ab64-4584-ab4b-67f27782c746",
       "credentials": {
         "gmailOAuth2": {
-          "id": "9MU68HBF118zmkkL",
+          "id": "YOUR_CREDENTIALS",
           "name": "Gmail account"
         }
       }
@@ -74,7 +74,7 @@
       "name": "Get row(s) in sheet",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "s31y9wde8YyCl8PY",
+          "id": "YOUR_CREDENTIALS",
           "name": "Google Sheets account"
         }
       }
@@ -110,14 +110,14 @@
           "value": "17Iax4lpo8yAMi7GmC0SpNp_KOVomZvlKDsgxNNq6aHY",
           "mode": "list",
           "cachedResultName": "Task Spongbob ",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Iax4lpo8yAMi7GmC0SpNp_KOVomZvlKDsgxNNq6aHY/edit?usp=drivesdk"
+          "cachedResultUrl": "SheetURL"
         },
         "sheetName": {
           "__rl": true,
           "value": "gid=0",
           "mode": "list",
           "cachedResultName": "Sheet1",
-          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/17Iax4lpo8yAMi7GmC0SpNp_KOVomZvlKDsgxNNq6aHY/edit#gid=0"
+          "cachedResultUrl": "SheetURL"
         },
         "options": {}
       },
@@ -131,14 +131,14 @@
       "name": "Get row(s) in sheet1",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "s31y9wde8YyCl8PY",
+          "id": "YOUR_CREDENTIALS",
           "name": "Google Sheets account"
         }
       }
     },
     {
       "parameters": {
-        "sendTo": "abdelrahamankanakrik@gmail.com",
+        "sendTo": "yourEmail@organization.domain",
         "subject": "New Task",
         "message": "=You have to do the following:<br>\n{{ $json['All Tasks'] }}\n<br>\nSpong",
         "options": {
@@ -157,7 +157,7 @@
       "executeOnce": false,
       "credentials": {
         "gmailOAuth2": {
-          "id": "9MU68HBF118zmkkL",
+          "id": "YOUR_CREDENTIALS",
           "name": "Gmail account"
         }
       }
