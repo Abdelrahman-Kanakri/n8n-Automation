@@ -45,7 +45,7 @@
       "name": "Google Gemini Chat Model",
       "credentials": {
         "googlePalmApi": {
-          "id": "sRapiLHJnkcGznmE",
+          "id": "YOUR_CREDENTIALS",
           "name": "Google Gemini(PaLM) Api account"
         }
       }
@@ -76,7 +76,7 @@
     },
     {
       "parameters": {
-        "sendTo": "abdelrahamankanakrik@gmail.com",
+        "sendTo": "OwnerEmail@gmail.com",
         "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
         "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
         "options": {
@@ -94,7 +94,7 @@
       "webhookId": "fa402bea-42fe-4f68-a8b5-4f05478b7bdd",
       "credentials": {
         "gmailOAuth2": {
-          "id": "9MU68HBF118zmkkL",
+          "id": "YOUR_CREDENTIALS",
           "name": "Gmail account"
         }
       }
