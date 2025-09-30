@@ -67,7 +67,7 @@
       "name": "Google Gemini Chat Model",
       "credentials": {
         "googlePalmApi": {
-          "id": "sRapiLHJnkcGznmE",
+          "id": "YOUR_CREDENTIALS",
           "name": "Google Gemini(PaLM) Api account"
         }
       }
@@ -174,7 +174,7 @@
       "name": "Create a record in Airtable",
       "credentials": {
         "airtableTokenApi": {
-          "id": "CpJQ7qzWp6JRbp6C",
+          "id": "YOUR_CREDENTIALS",
           "name": "Airtable Personal Access Token account"
         }
       }
