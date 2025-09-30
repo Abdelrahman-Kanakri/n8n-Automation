@@ -1,0 +1,241 @@
+{
+  "name": "Hotel FeedBack Summerizer",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Hotel Feedback",
+        "formDescription": "Thank you for taking our hotel.\nIf you please write a feedback of your staying in the hotel\n",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "First Name",
+              "placeholder": "e.g. Alex",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Last Name",
+              "placeholder": "e.g. Jason",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Review",
+              "fieldType": "textarea"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "abfd3535-f68a-480f-a443-6f741fd3c200",
+      "name": "On form submission",
+      "webhookId": "921ed2c1-934c-4a21-adfd-9461607fe38b"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=## Step 1 – Input Processing:\n\n*Extract the resident’s first name, last name, and their review text from the submission form.\n- First Name: {{ $json['First Name'] }}\n- Last Name: {{ $json['Last Name'] }}\n- Review: {{ $json.Review }}\n\n* Analyze the review’s sentiment (positive, negative, or neutral).\n\n* Write a concise summary of the review that reflects the resident’s opinion and tone (e.g., highlight compliments or issues).\n\n* Keep the summary professional, neutral, and easy to understand.\n\n## Step 2 – Airtable Output:\n\n* Append the first name, last name, and the summarized review into the Airtable (Create a record in Airtable) record under the field “Summery”.\n\n* Ensure only the clean summary text is saved (no extra explanations).",
+        "options": {
+          "systemMessage": "# You are a summarizer specialist. Your task is to process resident feedback and save a clean summary to Airtable."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "fa6cfb4f-3930-48ed-ac5f-7150e7e34d1c",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        80,
+        208
+      ],
+      "id": "74fd0aec-b9d7-456a-88b2-c587835994e4",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "sRapiLHJnkcGznmE",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json['First Name'] }} <br> \n{{ $json['Last Name'] }} <br>\n{{ $json.Review }} <br>",
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        208,
+        208
+      ],
+      "id": "ccdec873-c64a-4616-bf9e-951da61c4d9f",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appiPCypEHnO6B8kK",
+          "mode": "list",
+          "cachedResultName": "n8n hotel",
+          "cachedResultUrl": "https://airtable.com/appiPCypEHnO6B8kK"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblCsqHaKzY9zoTDS",
+          "mode": "list",
+          "cachedResultName": "Table 2",
+          "cachedResultUrl": "https://airtable.com/appiPCypEHnO6B8kK/tblCsqHaKzY9zoTDS"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "First Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('First_Name', ``, 'string') }}",
+            "Last Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Last_Name', ``, 'string') }}",
+            "Review": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Review', ``, 'string') }}",
+            "Summery": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Summery', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "First Name",
+              "displayName": "First Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Last Name",
+              "displayName": "Last Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Review",
+              "displayName": "Review",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Summery",
+              "displayName": "Summery",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        400,
+        176
+      ],
+      "id": "2cd86bc8-919b-4abc-9d44-5e5b29ea6b5a",
+      "name": "Create a record in Airtable",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "CpJQ7qzWp6JRbp6C",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a record in Airtable": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "32d145dd-0735-4a92-b036-9008390c6cf8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d582c6d9abbb88f361ce5586df1bb470a0ec28834901a8c3ab1164fc8a54753e"
+  },
+  "id": "dlDSDVsAhNxT1TYJ",
+  "tags": []
+}
