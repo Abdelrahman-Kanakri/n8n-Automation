@@ -117,7 +117,7 @@
       "name": "Append row in sheet",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "s31y9wde8YyCl8PY",
+          "id": "YOUR_CREDENTIALS",
           "name": "Google Sheets account"
         }
       }
@@ -151,7 +151,7 @@
       "name": "Google Gemini Chat Model",
       "credentials": {
         "googlePalmApi": {
-          "id": "sRapiLHJnkcGznmE",
+          "id": "YOUR_CREDENTIALS",
           "name": "Google Gemini(PaLM) Api account"
         }
       }
@@ -198,7 +198,7 @@
       "name": "Get row(s) in sheet in Google Sheets",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "s31y9wde8YyCl8PY",
+          "id": "YOUR_CREDENTIALS",
           "name": "Google Sheets account"
         }
       }
@@ -223,7 +223,7 @@
       "webhookId": "371d76a3-365e-4ebc-8167-7416cae219c7",
       "credentials": {
         "gmailOAuth2": {
-          "id": "9MU68HBF118zmkkL",
+          "id": "YOUR_CREDENTIALS",
           "name": "Gmail account"
         }
       }
@@ -253,7 +253,7 @@
       "webhookId": "def06e10-3d8f-4958-9602-37d8f8dd2c94",
       "credentials": {
         "telegramApi": {
-          "id": "xXhqOpRj33QVo8TO",
+          "id": "YOUR_CREDENTIALS",
           "name": "Telegram account 3"
         }
       }
@@ -264,7 +264,7 @@
       {
         "json": {
           "Company Name": "Robotna",
-          "Email": "abdelrahamankanakrik@gmail.com",
+          "Email": "yourEmail@gmail.com",
           "What is you monthly budget (in Dollar)": "more then 5000 $",
           "submittedAt": "2025-09-21T11:02:46.963+03:00",
           "formMode": "test"
