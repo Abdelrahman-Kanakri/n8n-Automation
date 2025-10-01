@@ -1,0 +1,387 @@
+{
+  "name": "Abdelrahman Belal Kanakri Exam project 1",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Thank you for eating with us",
+        "formDescription": "Give me your feedback about our service",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "What is your Name",
+              "placeholder": "e.g. Ahmad",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "What is your Phone Number",
+              "fieldType": "number",
+              "placeholder": "e.g. 0XXXXXXXXX",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "What is your Feedback",
+              "fieldType": "textarea",
+              "placeholder": "be honest with review",
+              "requiredField": true
+            },
+            {
+              "fieldName": "__",
+              "fieldType": "hiddenField",
+              "fieldValue": "={{$now}}"
+            }
+          ]
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        16
+      ],
+      "id": "a6831d94-09b4-44bc-bf8d-3363d67fc4b0",
+      "name": "On form submission",
+      "webhookId": "4a1e3ceb-b316-4ad1-babe-1a5274718513"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Please classify the sentiment of the following customer review:\n\"{{ $json['What is your Feedback'] }}\"",
+        "options": {
+          "systemMessage": "=# Role\nYou are an expert AI sentiment analysis classifier for a restaurant.\n\n# Behavior\nYou are tasked with reading customer reviews and classifying the sentiment of each review into one of three specific categories: \"Positive\", \"Negative\", or \"Neutral\". Your response MUST ONLY contain the classification word itself and nothing else. Do not provide any explanation, conversational text, or additional characters.\n\n# Input\nThe user will provide a single customer review text.\n\n# Output Format\nYour output must be a single word from the following set:\n- Positive\n- Negative\n- Neutral\n\n# Constraints\n1.  **Strict Output**: Output must be *only* the classification word.\n2.  **Language**: The classification word must be in English.\n3.  **Categories**: Only use the three specified categories.\n4.  **Impartiality**: Base your classification strictly on the sentiment expressed in the text.\n\n# Example\nInput: The waiter was friendly, but the food was a bit cold.\nOutput: Neutral\n\nInput: This is the best lasagna I have ever had!\nOutput: Positive\n\nInput: The service was slow and the coffee tasted burnt.\nOutput: Negative\n\n\n# Tools: \n\n## Weekly Report\nUse this tool to append the category of the user text"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        256,
+        16
+      ],
+      "id": "a014def6-23bb-4a85-85a8-da9e802df6be",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        80,
+        208
+      ],
+      "id": "30868f88-ff63-4d24-81d1-49623aa177e0",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_CREDENTIALS",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtHour": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -128,
+        464
+      ],
+      "id": "419dcdbe-8ba5-40dd-8c9a-5efb0485f59e",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# INPUT DATA\n\nPlease use the following aggregated customer review data, provided in JSON format, to generate the weekly summary email.\n\n**Customer Feedback Counts:**\ntaken from the google sheet (Get_Categories)\n\n# INSTRUCTION\n\nGenerate the **complete body** of the weekly feedback summary email, adhering to the structure defined in your System Prompt.\n\n**REQUIRED OUTPUT STRUCTURE:**\n\n1.  **Salutation** (e.g., \"Dear Team,\").\n2.  **Overall Assessment** (1-2 sentence summary of the week's sentiment based on the counts).\n3.  **Detailed Breakdown** (A clear, itemized list of the counts for Positive, Negative, and Neutral).\n4.  **Closing** (e.g., \"Best regards, Abood Kanakri\").\n\nEnsure the output is **only** the text of the email body, formatted using Markdown for clarity.\n\n\n",
+        "options": {
+          "systemMessage": "=# Role\nYou are a professional, concise, and insightful AI Report Writer specializing in summarizing customer feedback for the restaurant owner. Your goal is to produce a visually appealing, data-driven weekly summary email in **HTML format**.\n\n# Goal\nGenerate the **complete HTML body** of a weekly summary email based on the provided customer feedback classification data, ready for direct use by the Email_Send tool.\n\n# Behavior\nYour primary task is to **generate the complete HTML body** of the email.\n\n1.  **Analyze**: Determine the overall sentiment (e.g., \"The week's feedback is overwhelmingly positive,\" \"Feedback shows a balanced performance with a slight negative lean,\" etc.) by comparing the counts.\n\n2.  **Structure**: The output **must** be a **complete, well-formed HTML document fragment** suitable for an email body. It must include a professional salutation and closing.\n\n3.  **Content Sections**: The email must be clear, professional, and contain the following sections formatted using HTML:\n    * **Overall Assessment**: A prominent, bold summary (1-2 sentences) of the week's performance. Use simple inline CSS (e.g., `<span style=\"color: green;\">`) to highlight the overall sentiment (e.g., green for positive, red for negative).\n    * **Detailed Breakdown (Visual Report)**: A clear, organized HTML list or table to present the counts for Positive, Negative, and Neutral feedback. Use different colors for each category (e.g., green for Positive, red for Negative, orange/gray for Neutral).\n4.  **Tone**: Maintain a professional, objective, and respectful tone.\n5.  **Formatting**: The final output MUST be valid HTML, suitable for embedding as an email body. **Do NOT include `<html>`, `<head>`, or `<body>` tags** as these are typically added by the email client/tool. Start directly with a `<div>` or `<p>` tag.\n\n# Input Format\nThe user will provide the weekly summary data as the context, which will be in **JSON format** and will contain the total count for each feedback category: Positive, Negative, and Neutral.\n\n* **Example Input Structure**: `{\"Positive\": 150, \"Negative\": 25, \"Neutral\": 50}`. You must process this structure to extract the required numbers.\n\n# Output Format\nThe output **must** be the **complete, beautiful HTML email body only**. Do not include the email Subject, To, or From lines. Do not add any conversational text before or after the HTML block.\n\n# Constraints\n* The output must be **pure HTML**.\n* Keep the overall assessment concise and data-driven.\n\n# Tools\nYou have access to the following tools for the complete workflow execution, but you only use the data provided from the `Get_Categories` output to perform your task. MUST USE IN THE WORKFLOW\n\n## Get_Categories\nThis tool is used by the workflow to retrieve the classified review counts (Positive, Negative, Neutral) that will be provided to you as Input.\n\n\n\n# Email Strucure \n\n<b>Overall Assessment:</b> This week's feedback indicates a mixed performance, with <span style=\"color:#d9534f;font-weight:bold\">negative reviews slightly outweighing the positive ones</span>. This suggests specific areas may require our immediate attention.\n\n<div style=\"background-color:#f9f9f9;padding:15px;border-radius:5px;margin-top:20px\">\n    <h3 style=\"margin-top:0;border-bottom:2px solid #eee;padding-bottom:10px\">Detailed Breakdown</h3>\n    <ul style=\"list-style:none;padding:0\">\n        <li style=\"margin-bottom:12px;font-size:1.1em\">\n           <strong style=\"color:#5cb85c\">\n  <img alt=\"✔\" aria-label=\"✔\" src=\"https://fonts.gstatic.com/s/e/notoemoji/16.0/2714/72.png\" \n       loading=\"lazy\" style=\"width:14px; height:14px; vertical-align:middle;\"> Positive Reviews:\n</strong>\n\n            <span style=\"font-weight:bold;float:right\"></span>\n        </li>\n        <li style=\"margin-bottom:12px;font-size:1.1em\">\n            <strong style=\"color:#d9534f\">\n                <img alt=\"✖\" aria-label=\"✖\" src=\"https://fonts.gstatic.com/s/e/notoemoji/16.0/2716/72.png\" loading=\"lazy\" style=\"width:14px; height:14px; vertical-align:middle;\"> Negative Reviews:\n            </strong>\n            <span style=\"font-weight:bold;float:right\"></span>\n        </li>\n        <li style=\"margin-bottom:12px;font-size:1.1em\">\n            <strong style=\"color:#777\">─ Neutral Comments:</strong>\n            <span style=\"font-weight:bold;float:right\"></span>\n        </li>\n    </ul>\n</div>\n\nLet's use this valuable insight to guide our improvements for the upcoming week.\n\nBest regards,<br>Abood Kanakri\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        208,
+        464
+      ],
+      "id": "076bbdbd-8d1a-4494-aeef-82b0a442103c",
+      "name": "AI Agent1"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash-lite",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        32,
+        688
+      ],
+      "id": "25ecb63c-d1d0-4595-a74c-aa4fb0da5e7a",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_CREDENTIALS",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "19jQAfI5odjh2kuAN5dxLFKNyQp35ahUFg_O52OM7fzY",
+          "mode": "list",
+          "cachedResultName": "Weekly Report",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19jQAfI5odjh2kuAN5dxLFKNyQp35ahUFg_O52OM7fzY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Week 0",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19jQAfI5odjh2kuAN5dxLFKNyQp35ahUFg_O52OM7fzY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json['What is your Name'] }}",
+            "Phone Number": "={{ $json['What is your Phone Number'] }}",
+            "Feedback": "={{ $json['What is your Feedback'] }}",
+            "Classified Feedback": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Classified_Feedback', ``, 'string') }}",
+            "Date": "={{ $json.__ }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Date",
+              "displayName": "Date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Feedback",
+              "displayName": "Feedback",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Classified Feedback",
+              "displayName": "Classified Feedback",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        528,
+        176
+      ],
+      "id": "56ef905b-3e4b-4fb3-92f0-3bfb741bd1e7",
+      "name": "Weekly Report",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIALS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "19jQAfI5odjh2kuAN5dxLFKNyQp35ahUFg_O52OM7fzY",
+          "mode": "list",
+          "cachedResultName": "Weekly Report",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19jQAfI5odjh2kuAN5dxLFKNyQp35ahUFg_O52OM7fzY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Week 0",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/19jQAfI5odjh2kuAN5dxLFKNyQp35ahUFg_O52OM7fzY/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        528,
+        688
+      ],
+      "id": "3ba2ca78-808e-4728-9b6e-c7a54eb0b989",
+      "name": "Get_Categories",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIALS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "Your_Email@gmail.com",
+        "subject": "Weekly Report",
+        "message": "={{ $json.output }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        560,
+        464
+      ],
+      "id": "08f24007-1580-4a3d-bc9a-1a6c89190a99",
+      "name": "Send a message",
+      "webhookId": "3ae1ba1c-eb5a-4019-aa0a-ee21cf31907e",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_CREDENTIALS",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent1": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Weekly Report": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get_Categories": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent1",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c1096ce8-9757-4ed5-908d-1ed7a50994d8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d582c6d9abbb88f361ce5586df1bb470a0ec28834901a8c3ab1164fc8a54753e"
+  },
+  "id": "7oxUaHRt5lpMFe8T",
+  "tags": []
+}
