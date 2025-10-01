@@ -1,0 +1,370 @@
+{
+  "name": "Marketing Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Leads Generator",
+        "formDescription": "Thanks for your interest",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Company Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "What is you monthly budget (in Dollar)",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "100-1000 $"
+                  },
+                  {
+                    "option": "1000 - 2500 $"
+                  },
+                  {
+                    "option": "more then 5000 $"
+                  }
+                ]
+              },
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        -16,
+        0
+      ],
+      "id": "a619d443-5e1d-4260-afff-dedf56999444",
+      "name": "On form submission",
+      "webhookId": "5a7b4e08-e227-4661-9a7c-cad606dd4627"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1DZz2eDrB4dNNLiKdIdDc-uUo201uGQtmsvjobbQAdlw",
+          "mode": "list",
+          "cachedResultName": "Lead Marketing",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DZz2eDrB4dNNLiKdIdDc-uUo201uGQtmsvjobbQAdlw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DZz2eDrB4dNNLiKdIdDc-uUo201uGQtmsvjobbQAdlw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Company Name": "={{ $json['Company Name'] }}",
+            "Email": "={{ $json.Email }}",
+            "What is you monthly budget (in Dollar)": "={{ $json['What is you monthly budget (in Dollar)'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Company Name",
+              "displayName": "Company Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "What is you monthly budget (in Dollar)",
+              "displayName": "What is you monthly budget (in Dollar)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "584d4212-1d5b-4f17-bff0-477f8cb0a1e4",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "s31y9wde8YyCl8PY",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=# Role\nYou are Abdo, a professional Mailing Specialist.\n\n# Objective\n\n* Retrieve data from Google Spreadsheets.\n\n* Check the budget column for each entry.\nIf the budget is greater than $5000, prepare a thank-you and welcome email to the corresponding person.\n\n# Workflow\n\n## Data Collection\n\nAccess the Google Spreadsheet to fetch the latest data.\n\n## Condition Check\n\nFor each row, check if the budget > $5000.\n\nIdentify the person who made that selection.\n\n## Email Drafting\n\nDraft a professional, warm, and clear email addressed to the person.\n\nThe email should:\n\nThank them for their selection.\n\nExpress appreciation for their trust and investment.\n\nWelcome them and set a positive tone for the collaboration.\n\n## Approval via Telegram\n\nSend the drafted email to me on Telegram.\n\nWait for my response:\n\nIf approved, proceed with sending it to the customer.\n\nIf not approved, rework the email based on my feedback and send again until approved.\n\n# Tools\n\n## Google Spreadsheet → to fetch and filter data.\n\n## Telegram (Send & Wait) → for approval loop before sending emails.\n\n# Constraints\n\nEmails must be polite, professional, and concise.\n\nAlways include a subject line suggestion.\n\nNever send an email without my Telegram approval.",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "76d35bb4-07f0-46b2-93f8-6ed2aed525cc",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        288,
+        208
+      ],
+      "id": "8b995b6f-1064-4321-b737-1584468b5f6d",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "sRapiLHJnkcGznmE",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('On form submission').item.json['Company Name'] }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        432,
+        208
+      ],
+      "id": "a50a4a08-0c71-4743-a224-7d1b73637e4c",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1DZz2eDrB4dNNLiKdIdDc-uUo201uGQtmsvjobbQAdlw",
+          "mode": "list",
+          "cachedResultName": "Lead Marketing",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DZz2eDrB4dNNLiKdIdDc-uUo201uGQtmsvjobbQAdlw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1DZz2eDrB4dNNLiKdIdDc-uUo201uGQtmsvjobbQAdlw/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        640,
+        176
+      ],
+      "id": "c3a16161-a456-44cb-95df-86ebfb9ef39a",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "s31y9wde8YyCl8PY",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        752,
+        144
+      ],
+      "id": "38e25313-382a-430b-9b63-464ff6854760",
+      "name": "Send a message in Gmail",
+      "webhookId": "371d76a3-365e-4ebc-8167-7416cae219c7",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "9MU68HBF118zmkkL",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendAndWait",
+        "chatId": "7468404364",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "approvalOptions": {
+          "values": {
+            "approvalType": "double"
+          }
+        },
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegramTool",
+      "typeVersion": 1.2,
+      "position": [
+        544,
+        288
+      ],
+      "id": "719f95b5-f7a7-4f4c-a6c4-8790769e16c8",
+      "name": "Send message and wait for response in Telegram",
+      "webhookId": "def06e10-3d8f-4958-9602-37d8f8dd2c94",
+      "credentials": {
+        "telegramApi": {
+          "id": "xXhqOpRj33QVo8TO",
+          "name": "Telegram account 3"
+        }
+      }
+    }
+  ],
+  "pinData": {
+    "On form submission": [
+      {
+        "json": {
+          "Company Name": "Robotna",
+          "Email": "abdelrahamankanakrik@gmail.com",
+          "What is you monthly budget (in Dollar)": "more then 5000 $",
+          "submittedAt": "2025-09-21T11:02:46.963+03:00",
+          "formMode": "test"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send message and wait for response in Telegram": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "2211b950-c9ad-4002-8e0d-be306ed308c8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d582c6d9abbb88f361ce5586df1bb470a0ec28834901a8c3ab1164fc8a54753e"
+  },
+  "id": "aOKSch05boYYFG0Y",
+  "tags": []
+}
