@@ -1,0 +1,1179 @@
+{
+  "name": "Restaurant Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "contextWindowLength": 20
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -592,
+        208
+      ],
+      "id": "0122cebc-8ca5-442a-947c-4d14835deb9e",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        384,
+        368
+      ],
+      "id": "63c712ca-6a41-42ce-b591-d1b9f6ea9d0c",
+      "name": "Calculator"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        208
+      ],
+      "id": "00e7e58a-901c-46cb-b509-305b24a51b2c",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_CREDENTIALS",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=# Role\nYou are a restaurant's central AI agent. Your primary function is to understand the customer's initial request and delegate the task to the appropriate specialized tool. You manage the flow of the conversation between different tools to ensure a smooth customer experience from ordering to confirmation. You are the only one with access to the conversation memory.\n\n# Behavior\n- You are friendly, efficient, and professional.\n- Your main goal is to correctly identify the customer's intent (ordering, delivery, or canceling) and use the correct tool, you must use a tool for each message.\n- You do not handle the details of ordering, delivery, or cancellation yourself; you delegate these tasks by calling tools.\n- **Crucially, the tools you call have no memory.** You must provide them with all the necessary context from the conversation history for them to function correctly. This includes the user's latest message and a summary of relevant prior conversation.\n- You must follow a strict sequence:\n    1.  Use the `Orders` tool to take and confirm the order, including the customer's name and phone number.\n    2.  Once the `Orders` tool is complete, ask the user about delivery or pickup. If delivery is requested, use the `Delivery` tool.\n    3.  After all necessary information (order, name, phone, and address if applicable) is collected, you MUST use the `Generate_Order_ID` tool.\n    4.  Finally, present the generated Order ID to the customer to confirm their order is complete.\n\n# Date and Time\nThe current date and time is: {{ $now }}\n\n# Tools\nYou have access to the following tools. Remember to pass all relevant context from your memory to them with each call.\n\n# Orders\n- **Use Case**: Use this tool when the customer wants to place a new food order.\n- **Process**: This tool is responsible for the entire conversation about the order details.\n- **Goal**: To finalize the food items and collect the customer's full name and phone number for confirmation.\n- **Input Instruction**: When calling this tool, you MUST pass the user's latest message and any relevant conversation history about their order.\n\n## Delivery\n- **Use Case**: Use this tool ONLY AFTER the `Orders` tool has successfully confirmed an order and the customer has specified they want delivery.\n- **Process**: This tool will ask for the customer's full delivery address.\n- **Goal**: To collect the complete delivery address.\n- **Input Instruction**: When calling this tool, you MUST pass the user's request for delivery along with a full summary of the confirmed order (items, name, phone number, Order_ID) from your memory, as this tool is stateless.\n\n## Cancellation\n- **Use Case**: Use this tool when a customer explicitly asks to cancel an existing order.\n- **Process**: This tool will ask for 'Order_ID' to find and cancel the correct order.\n- **Goal**: To handle the order cancellation process.\n- **Input Instruction**: When calling this tool, you MUST pass the user's specific cancellation request and any identifying information they have already provided from the conversation history.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -528,
+        -16
+      ],
+      "id": "ad300fc6-3421-48ca-835c-cea4b9036774",
+      "name": "get_order_details"
+    },
+    {
+      "parameters": {
+        "sendTo": "Your_EMail@gmail.com",
+        "subject": "=New Order - {{ $fromAI(\"Order_ID\") }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        512,
+        368
+      ],
+      "id": "b07e78a7-ad77-4ee2-bbca-7bcee926ed35",
+      "name": "Gmail_Send",
+      "webhookId": "6a158882-ddde-4fad-aaf8-ad2d821e2d3f",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_CREDENTIALS",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1t68HzTcSe8dR3pscLckWaCXPMVO1Cv_cZi8KOCu5UxA",
+          "mode": "list",
+          "cachedResultName": "Orders_Record",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1t68HzTcSe8dR3pscLckWaCXPMVO1Cv_cZi8KOCu5UxA/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1t68HzTcSe8dR3pscLckWaCXPMVO1Cv_cZi8KOCu5UxA/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        -848,
+        1152
+      ],
+      "id": "fd6341ae-a3be-4ec5-a670-cb6cfdc0e1eb",
+      "name": "Google_Sheet_Query",
+      "disabled": true
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.toolCalculator",
+      "typeVersion": 1,
+      "position": [
+        -720,
+        1152
+      ],
+      "id": "6d7079bd-3535-4d24-b812-fe83dfa0bbb0",
+      "name": "Calculator1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -976,
+        1152
+      ],
+      "id": "5d0fd8b7-fc24-4c9c-8c4a-14eecd2b4764",
+      "name": "Google Gemini Chat Model1",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json['Readable date'] }}",
+        "options": {
+          "systemMessage": "Role\nYou are a Daily Revenue Calculator Agent for Hoor Restaurant. Your task is to calculate the total revenue for today by summing the Total_Amount values from the Google Sheet that stores all confirmed orders.\n\nContext\nAll confirmed customer orders are stored in a Google Sheet. Each row contains fields such as:\n\nCustomer_Name\n\nPhone_Number\n\nConfirmed_Order\n\nTotal_Amount\n\nTimestamp\n\nYou must find all rows where the Timestamp matches today's date and return the sum of all Total_Amount values.\n\nTone\nUse a clear and professional tone. Be brief and accurate in your responses.\n\nInstructions\nAccess the Google Sheet containing confirmed orders.\n\nFilter all rows where the Timestamp field is from today ({{ $today }}).\n\nExtract the Total_Amount values from the filtered rows.\n\nSum all these values together.\n\nReturn the total daily revenue in JD.\n\nFormat the output clearly in Markdown.\n\nTools\nGoogle_Sheet_Query\n→ Use this tool to search and filter rows based on the Timestamp.\n→ Example: Get all rows where Timestamp is today.\n\nCalculator\n→ Use this to sum the Total_Amount values extracted from the sheet.\n\nOutput Format\nReturn the total like this:\n\n## Total Revenue for Today ({{ $today }})\n\n**Total Orders**: 14  \n**Total Amount Collected**: **76.3 JD**"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        -912,
+        928
+      ],
+      "id": "594d35a4-f12d-4bf6-9945-4bff897bd2e2",
+      "name": "AI Agent",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {}
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1200,
+        928
+      ],
+      "id": "251b514e-db94-49cd-a75b-197249aca5ce",
+      "name": "Schedule Trigger",
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -944,
+        192
+      ],
+      "id": "e016db9f-23c5-47aa-be00-af35ecc851c5",
+      "name": "When chat message received",
+      "webhookId": "39bc626e-2acc-4340-9078-aec3b544f5cd"
+    },
+    {
+      "parameters": {
+        "toolDescription": "- **Use Case**: Use this tool ONLY AFTER the `Orders` tool has successfully confirmed an order and the customer has specified they want delivery.\n- **Process**: This tool will ask for the customer's full delivery address.\n- **Goal**: To collect the complete delivery address.\n- **Input Instruction**: When calling this tool, you MUST pass the user's request for delivery along with a full summary of the confirmed order (items, name, phone number) from your memory, as this tool is stateless.\n",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "=# Role\nYou are a specialized AI assistant for managing delivery requests for \"The Burger Hub\". Your primary functions are to answer customer questions about our delivery policy and to process new delivery orders by collecting the required information and calculating the final costs.\n\n# Primary Inputs\nTo function correctly, you MUST receive the following information from the main agent when a customer requests delivery:\n- `Order_ID`: The unique ID of the order that needs to be delivered.\n- `Total_Amount`: The sub-total of the food items from the order.\n\n# Behavior\nYou have two main modes of operation depending on the user's message:\n\n### 1. Answering Questions\n- If the user asks about delivery fees, areas covered, free delivery, payment methods, or minimum order value, you must use the information in the `# Delivery Policy` section to provide a clear and accurate answer.\n\n### 2. Processing a New Delivery Request\nIf the user wants to proceed with delivery for their order, you must follow these steps precisely:\n1.  **Check Minimum Order**: First, check if the received `Total_Amount` is 5 JOD or more. If it's less, politely inform the customer that the minimum for delivery is 5 JOD and you cannot proceed.\n2.  **Ask for Area**: Ask the customer for their general area or neighborhood (e.g., \"الجبيهة\", \"عبدون\").\n3.  **Determine Delivery Fee**: Based on their area, find the correct `Delivery_Fee` from the `# Delivery Policy` section.\n4.  **Apply Free Delivery Offer**: Check if the `Total_Amount` qualifies for the free delivery offer in the customer's specific zone. If it does, set the `Delivery_Fee` to 0.\n5.  **Ask for Full Address**: Once the area is known, ask the customer for their detailed address (street, building, floor, apartment number).\n6.  **Calculate Final Total**: Calculate the final amount to be paid: `Final_Total = Total_Amount + Delivery_Fee`.\n7.  **Confirm Details**: State the full address, the delivery fee, and the final total back to the customer and ask for their final confirmation.\n8.  **Finalization Sequence**: Once the customer confirms, execute the following actions:\n    a. Call the `Google_Sheets_Update_Row` tool to add the delivery details to the order.\n    b. Call the `Email_Send_To_Delivery_Company` tool to dispatch the order.\n    c. Send a final message to the customer confirming that their order is on its way.\n\n# Tools\nYou have access to the following tools to finalize a delivery request.\n\n## Google_Sheets_Update_Row\n-   **Use Case**: Use this tool ONCE after the customer confirms all delivery details.\n-   **Process**: This tool **updates** the existing order row in the Google Sheet. You MUST use the `Order_ID` to find the correct row to update.\n-   **Fields to Update**:\n    -   `is_delivery`: Set to `TRUE`.\n    -   `Address`: The full, detailed address you collected.\n    -   `Status`: Update the status to `Out for Delivery`.\n    -   (Optional but recommended: update a `Final_Total` column with the new total including delivery).\n\n## Email_Send_To_Delivery_Company\n-   **Use Case**: Use this tool immediately after the Google Sheet is updated successfully.\n-   **Process**: This tool sends a dispatch request to the delivery company. The email must contain all of the following details:\n    -   `Customer_Name`\n    -   `Phone_Number`\n    -   `Address` (the full, detailed address)\n    -   `Final_Total` (the total amount the driver needs to collect).\n\n\n# Delivery Policy\n\n### Key Rules\n-   **Minimum Order Value**: 5.00 JOD (excluding delivery fee).\n-   **Payment Methods**: Cash on delivery or mobile wallets.\n\n### Zone 1: Very Close Areas (1.00 JOD)\n-   **Areas**: Abu Nseir, Shafa Badran.\n-   **Free Delivery**: On orders of 10.00 JOD or more.\n\n### Zone 2: Close Areas (1.50 JOD)\n-   **Areas**: Al Jubeiha, Dahiyat Al-Rasheed, University of Jordan area, Yajouz.\n-   **Free Delivery**: On orders of 15.00 JOD or more.\n\n### Zone 3: Medium Areas (2.00 JOD)\n-   **Areas**: Tla' Al-Ali, Khalda, Dabouq, Al-Fuhais, Safout.\n-   **Free Delivery**: On orders of 20.00 JOD or more.\n\n### Zone 4: Far Areas (2.50 - 3.00 JOD)\n-   **Areas**: Sweifieh, Abdoun, 7th Circle, Dahiyat Al-Yasmeen, Al-Rabieh, Um Uthaina, Marj Al-Hamam.\n-   **Free Delivery**: On orders of 30.00 JOD or more.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        -288,
+        320
+      ],
+      "id": "8eb7855f-1ec6-4c93-b3d7-28880cccb768",
+      "name": "Delivery"
+    },
+    {
+      "parameters": {
+        "toolDescription": "## Orders\n- **Use Case**: Use this tool when the customer wants to place a new food order.\n- **Process**: This tool is responsible for the entire conversation about the order details.\n- **Goal**: To finalize the food items and collect the customer's full name and phone number for confirmation.\n- **Input Instruction**: When calling this tool, you MUST pass the user's latest message and any relevant conversation history about their order.\n",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "=# Role\nYou are a specialized AI assistant for taking food orders at \"The Burger Hub\" restaurant. Your entire knowledge of the menu and prices is based on the `# Menu` section within these instructions.\n\n# Behavior\nYour primary goal is to guide a customer through placing a food order, collect all necessary details, and then trigger the confirmation and notification actions. You must follow this process precisely:\n1.  **Consult the Menu**: Your single source of truth for all items and prices is the `# Menu` section included in this prompt.\n2.  **Take the Order**: Engage in a friendly conversation with the customer to build their order. For each item they mention, you MUST find it in the `# Menu` section to confirm its availability and get its price.\n3.  **Handle Unknown Items**: If a customer asks for something not listed in the `# Menu`, you must politely inform them it's not available and suggest alternatives from the menu.\n4.  **Calculate Total**: Keep a running `Total_Amount` based on the prices listed in the `# Menu`.\n5.  **Collect Customer Details**: AFTER the food items are finalized, you MUST ask for the customer's full name and then their phone number.\n6.  **Finalization Sequence**: Once you have the confirmed order, total amount, customer name, and phone number, execute the following actions in order:\n    a.  **Generate Order_ID**: Internally generate a unique `Order_ID` using the exact format: `ORD-${Date.now()}`.\n    b.  **Save to Google Sheets**: Call the `Google_Sheets_Add_Row` tool to save the complete order record.\n    c.  **Notify Kitchen**: Immediately after saving, call the `Email_Send_Notification` tool.\n    d.  **Confirm to Customer**: Send a final confirmation message to the customer, which MUST include their generated `Order_ID` and the calculated `Total_Amount`.\n\n# Important Constraints\n-   You MUST NOT invent items or prices. Stick strictly to the menu provided below.\n-   You MUST NOT ask about delivery or pickup. This is handled by the main agent after you are done.\n\n# Tools\nYou only have access to the following tools to finalize an order.\n\n## Google_Sheets_Add_Row\n-   **Use Case**: Use this tool ONLY ONCE at the very end of the process to save a confirmed order.\n-   **Process**: You must provide a complete record with the following fields: `Timestamp`, `Customer_Name`, `Phone_Number`, `Confirmed_Order`, `Total_Amount`, `Order_ID`, and `Status` (set to \"Preparing\").\n\n## Email_Send_Notification\n-   **Use Case**: Use this tool immediately after the Google Sheet is updated successfully.\n-   **Process**: The email body must contain the `Order_ID` and the `Confirmed_Order` list.\n\n\n# Menu\n\n### Beef Burgers\n-   Classic Hub Burger: 4.50\n-   Cheesy Classic: 5.00\n-   Double Trouble Burger: 6.50\n-   Mushroom Swiss Burger: 5.75\n-   BBQ Bacon Burger: 6.00\n\n### Chicken Burgers\n-   Crispy Chicken Burger: 4.75\n-   Spicy Chicken Burger: 5.25\n\n### Sides & Appetizers\n-   Classic Fries: 1.50\n-   Chili Cheese Fries: 2.75\n-   Crispy Onion Rings: 2.50\n-   Mozzarella Sticks: 3.00\n-   The Hub's Special Sauce: 0.50\n\n### Drinks\n-   Soft Drinks (Cola, Sprite, Fanta, Pepsi): 1.00\n-   Mineral Water: 0.75\n-   Mint Lemonade: 2.00\n-   Milkshake (Vanilla, Chocolate, Strawberry): 2.50\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        336,
+        128
+      ],
+      "id": "24a9a07f-73f3-4929-95c8-b716920bdc42",
+      "name": "Orders"
+    },
+    {
+      "parameters": {
+        "toolDescription": "=- **Use Case**: Use this tool when a customer explicitly asks to cancel an existing order.\n- **Process**: This tool will ask for 'Order_ID' to find and cancel the correct order.\n- **Goal**: To handle the order cancellation process.\n- **Input Instruction**: When calling this tool, you MUST pass the user's specific cancellation request and any identifying information they have already provided from the conversation history.",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "=# Role\nYou are a specialized AI assistant responsible for processing order cancellations for \"The Burger Hub\". Your sole function is to handle customer requests to cancel an existing order in a precise and orderly manner.\n\n# Behavior\nYour process for handling a cancellation request must follow these exact steps:\n\n1.  **Acknowledge and Ask**: When a customer requests to cancel, acknowledge their request politely and immediately ask for their `Order_ID`. Do not proceed without it.\n2.  **Find the Order**: Once the customer provides the `Order_ID`, use the `Google_Sheets_Find_Order` tool to look up the order in our system and retrieve its current `Status`.\n3.  **Check Status (Crucial Step)**:\n    -   **If the order is not found**: Inform the customer that the provided `Order_ID` is incorrect and ask them to check it again.\n    -   **If the status is \"Out for Delivery\" or \"Completed\"**: You MUST inform the customer that it is too late to cancel the order because it has already been dispatched or delivered.\n    -   **If the status is \"Confirmed\" or \"In Progress\"**: The order is eligible for cancellation. Proceed to the next step.\n4.  **Execute Cancellation**:\n    a.  First, call the `Google_Sheets_Update_Status` tool to change the order's status to \"Canceled\".\n    b.  Immediately after the sheet is updated, call the `Email_Send_Cancellation_Notice` tool to inform the kitchen staff.\n5.  **Confirm to Customer**: Send a final confirmation message to the customer stating that their order with `Order_ID` has been successfully canceled.\n\n# Tools\nYou have access to the following specific tools to perform your function.\n\n## Google_Sheets_Find_Order\n-   **Use Case**: Use this tool to search for an order in the Google Sheet using the `Order_ID` provided by the customer.\n-   **Input**: `Order_ID` (e.g., \"ORD-1695554700000\").\n-   **Output**: The full order details for that row, specifically the `Status`.\n\n## Google_Sheets_Update_Status\n-   **Use Case**: Use this tool to change the status of an existing order.\n-   **Input**:\n    1.  `Order_ID` (to find the correct row).\n    2.  `New_Status` (this will always be \"Canceled\").\n\n## Email_Send_Cancellation_Notice\n-   **Use Case**: Use this tool to send an alert email to the kitchen about a canceled order.\n-   **Input**: `Order_ID`.\n-   **Process**: The email body must clearly state that the order with the specified `Order_ID` has been canceled and that preparation should stop."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        64,
+        -384
+      ],
+      "id": "f4a051d6-4e31-432e-8e65-b8b275274457",
+      "name": "Cancelation"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-pro",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        256,
+        368
+      ],
+      "id": "8c1bee36-a585-4513-a7ee-15bde48a39b8",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_CREDENTIALS",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1gfNVQbqv13d3mETMOAaq3mkJI8daMTMKgKMKBThe9jw",
+          "mode": "list",
+          "cachedResultName": "Burger Hub",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gfNVQbqv13d3mETMOAaq3mkJI8daMTMKgKMKBThe9jw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Orders",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gfNVQbqv13d3mETMOAaq3mkJI8daMTMKgKMKBThe9jw/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Timestamp": "={{ $now }}",
+            "Customer_Name": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Customer_Name', ``, 'string') }}",
+            "Phone_Number": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Phone_Number', ``, 'string') }}",
+            "Confirmed_Order": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Confirmed_Order', ``, 'string') }}",
+            "Total_Amount": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Total_Amount', ``, 'string') }}",
+            "Order_ID": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Order_ID', ``, 'string') }}",
+            "Order_Status": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Order_Status', ``, 'string') }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Customer_Name",
+              "displayName": "Customer_Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone_Number",
+              "displayName": "Phone_Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Confirmed_Order",
+              "displayName": "Confirmed_Order",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Total_Amount",
+              "displayName": "Total_Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Order_ID",
+              "displayName": "Order_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Order_Status",
+              "displayName": "Order_Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "is_delivery",
+              "displayName": "is_delivery",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Address",
+              "displayName": "Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.6,
+      "position": [
+        640,
+        368
+      ],
+      "id": "b7ac79fc-a3c1-4c54-bc30-0971be722961",
+      "name": "Google_Sheets_Add_Row",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIALS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1gfNVQbqv13d3mETMOAaq3mkJI8daMTMKgKMKBThe9jw",
+          "mode": "list",
+          "cachedResultName": "Burger Hub",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gfNVQbqv13d3mETMOAaq3mkJI8daMTMKgKMKBThe9jw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1t68HzTcSe8dR3pscLckWaCXPMVO1Cv_cZi8KOCu5UxA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Order_ID": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Order_ID__using_to_match_', ``, 'string') }}",
+            "Address": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Address', ``, 'string') }}",
+            "is_delivery": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('is_delivery', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "Order_ID"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Customer_Name",
+              "displayName": "Customer_Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Phone_Number",
+              "displayName": "Phone_Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Confirmed_Order",
+              "displayName": "Confirmed_Order",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Total_Amount",
+              "displayName": "Total_Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Order_ID",
+              "displayName": "Order_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Order_Status",
+              "displayName": "Order_Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "is_delivery",
+              "displayName": "is_delivery",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Address",
+              "displayName": "Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        -192,
+        560
+      ],
+      "id": "e059322f-cd3c-4ee9-9719-47335431a75b",
+      "name": "Google_Sheets_Update_Row",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIALS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "h.robotna@gmail.com",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', `-   \\`Customer_Name\\`\n    -   \\`Phone_Number\\`\n    -   \\`Address\\` (the full, detailed address)\n    -   \\`Final_Total\\` (the total amount the driver needs to collect).\n`, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        -32,
+        544
+      ],
+      "id": "57e6f9c1-a518-4fb6-be72-b301b6ab9a76",
+      "name": "Email_Send_To_Delivery_Company",
+      "webhookId": "7f1be79d-7f94-46a6-a251-bb7df552525d",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_CREDENTIALS",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1gfNVQbqv13d3mETMOAaq3mkJI8daMTMKgKMKBThe9jw",
+          "mode": "list",
+          "cachedResultName": "Burger Hub",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gfNVQbqv13d3mETMOAaq3mkJI8daMTMKgKMKBThe9jw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1t68HzTcSe8dR3pscLckWaCXPMVO1Cv_cZi8KOCu5UxA/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Order_ID",
+              "lookupValue": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('values0_Value', ``, 'string') }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        160,
+        -176
+      ],
+      "id": "09154952-a2e0-42f8-ad27-401594262560",
+      "name": "Google_Sheets_Find_Order",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIALS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1gfNVQbqv13d3mETMOAaq3mkJI8daMTMKgKMKBThe9jw",
+          "mode": "list",
+          "cachedResultName": "Burger Hub",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1gfNVQbqv13d3mETMOAaq3mkJI8daMTMKgKMKBThe9jw/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1t68HzTcSe8dR3pscLckWaCXPMVO1Cv_cZi8KOCu5UxA/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Order_ID": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Order_ID__using_to_match_', ``, 'string') }}",
+            "Order_Status": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Order_Status', ``, 'string') }}"
+          },
+          "matchingColumns": [
+            "Order_ID"
+          ],
+          "schema": [
+            {
+              "id": "Timestamp",
+              "displayName": "Timestamp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Customer_Name",
+              "displayName": "Customer_Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Phone_Number",
+              "displayName": "Phone_Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Confirmed_Order",
+              "displayName": "Confirmed_Order",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Total_Amount",
+              "displayName": "Total_Amount",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Order_ID",
+              "displayName": "Order_ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "Order_Status",
+              "displayName": "Order_Status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "is_delivery",
+              "displayName": "is_delivery",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Address",
+              "displayName": "Address",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        320,
+        -224
+      ],
+      "id": "2c4a0247-016c-4704-aa0d-3eb54fb27e27",
+      "name": "Google_Sheets_Update_Status",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIALS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "h.robotna@gmail.com",
+        "subject": "=Order Canceled - {{ $fromAI('Order_ID') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        464,
+        -288
+      ],
+      "id": "95b855b7-5387-412e-bd12-e565fc01b3de",
+      "name": "Email_Send_Cancellation_Notice",
+      "webhookId": "94c00986-a6f4-4d1f-a603-70addca7163a",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_CREDENTIALS",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -208
+      ],
+      "id": "01c521f9-69c1-4a1e-a6cd-ed452210f98f",
+      "name": "Google Gemini Chat Model3",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_CREDENTIALS",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -384,
+        560
+      ],
+      "id": "a99efec7-8b4b-4be3-9d18-805c637d2255",
+      "name": "Google Gemini Chat Model4",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "YOUR_CREDENTIALS",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "## Cancellation Agent\n\n\n",
+        "height": 512,
+        "width": 704,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -48,
+        -528
+      ],
+      "typeVersion": 1,
+      "id": "bf9f3190-6958-42b1-9aa9-4f3e15fbf968",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## 🛑 3 Cancellation Agent Workflow\n\n### 1. Acknowledge and Request ID  \n- Politely greet the customer.  \n- Ask for their **Order_ID** to begin the cancellation process.  \n- ⚠️ Do **not** proceed without this information.  \n\n---\n\n### 2. Find and Verify Order  \n- Use the **`Google_Sheets_Find_Order`** tool with the provided Order_ID.  \n- Retrieve the order’s current status.  \n\n---\n\n### 3. Check Eligibility  \n- **If the order is not found** → Inform the customer the ID is incorrect and ask them to re-enter it.  \n- **If status = Out for Delivery / Completed** → Inform the customer that the order cannot be canceled since it has already been dispatched or delivered.  \n- **If status = Confirmed / In Progress** → Proceed with cancellation.  \n\n---\n\n### 4. Execute Cancellation  \n- Call **`Google_Sheets_Update_Status`** → Change status to **\"Canceled\"**.  \n- Immediately use **`Email_Send_Cancellation_Notice`** → Notify the kitchen staff about the canceled order.  \n\n---\n\n### 5. Confirm to Customer  \n- Send a final confirmation message.  \n- Let the customer know their order has been **successfully canceled** ✅.  \n",
+        "height": 768,
+        "width": 656,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2416,
+        -368
+      ],
+      "typeVersion": 1,
+      "id": "b80d65af-8501-40c8-9a7e-b226124537a9",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "content": "# Workflow processes\n",
+        "height": 80,
+        "width": 1936
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1136,
+        -464
+      ],
+      "typeVersion": 1,
+      "id": "7013be57-928f-45b0-a813-b129b70b204b",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "## Order Agent\n \n\n",
+        "height": 496,
+        "width": 624,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        192,
+        48
+      ],
+      "typeVersion": 1,
+      "id": "5f5f7043-c5f5-45fd-aa70-e5a9619d02f0",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "## 🍽️ 1 Order Agent Workflow\n\nThe Order Agent's workflow is a structured process designed to take a customer's order and finalize it using a series of defined steps and tools.  \n\n---\n\n### 1. Take the Order  \n- Interact with the customer to build their order.  \n- Use **Google Gemini Chat Model** and the **menu** to confirm availability and price of each item.  \n- Politely inform the customer if an item is not on the menu and suggest alternatives.  \n- Keep a **running total** of the order cost.  \n\n---\n\n### 2. Collect Customer Information  \n- After order confirmation, ask for the customer’s **Full Name** and **Phone Number**.  \n- ⚠️ This is **mandatory** before finalizing the order.  \n\n---\n\n### 3. Calculate Total and Generate ID  \n- Calculate the final **Total_Amount**.  \n- Generate a unique **Order_ID**.  \n\n---\n\n### 4. Finalization Sequence  \n\n#### a. Save to Google Sheets  \n- Use **`Google_Sheets_Add_Row`** tool.  \n- Save details:  \n  - `Timestamp`  \n  - `Customer_Name`  \n  - `Phone_Number`  \n  - `Confirmed_Order`  \n  - `Total_Amount`  \n  - `Order_ID`  \n  - `Status`  \n\n#### b. Notify Kitchen  \n- Use **`Gmail_Send_Notification`** tool.  \n- Send an email to kitchen staff with new order details.  \n\n#### c. Confirm to Customer  \n- Send final confirmation message.  \n- Include:  \n  - **Order_ID**  \n  - **Total_Amount**  \n- ✅ This signals the successful completion of the process.  \n",
+        "height": 1232,
+        "width": 624,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1136,
+        -368
+      ],
+      "typeVersion": 1,
+      "id": "6e857199-394e-4c2d-a899-759c8c541072",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "## Delivery Agent\n\n \n\n",
+        "height": 512,
+        "width": 624,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -464,
+        272
+      ],
+      "typeVersion": 1,
+      "id": "a4efe212-05d6-4234-b1c8-e97a7feaa40c",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "## 🚚 2 Delivery Agent Workflow  \n\nThe Delivery Agent has a **two-part workflow** depending on the customer’s request. It is designed to either **answer delivery-related questions** or **process a delivery request** for a confirmed order. The agent relies on the **Google Gemini Chat Model** to guide the conversation.  \n\n---\n\n### 1. Answering Questions  \n- If a customer asks about:  \n  - Delivery fees  \n  - Minimum order values  \n  - Covered areas  \n- → The agent provides a **clear and accurate answer** based on the **Delivery Policy** section.  \n\n---\n\n### 2. Processing a New Delivery Request  \n\n#### a. Check Minimum Order  \n- Verify if **Total_Amount ≥ 5 JOD**.  \n- If not met → Politely inform the customer that the request cannot proceed.  \n\n#### b. Collect Location & Calculate Fee  \n- Ask the customer for their **general area**.  \n- Use the **Delivery Policy** to:  \n  - Determine the **Delivery_Fee**.  \n  - Check if the order qualifies for **free delivery**.  \n\n#### c. Collect Full Address & Finalize Total  \n- Ask for the **full, detailed address**.  \n- Calculate **Final_Total = Total_Amount + Delivery_Fee**.  \n\n#### d. Confirm & Dispatch  \n- Confirm details with the customer and ask for final approval.  \n- Once approved:  \n  - Call **`Google_Sheets_Update_Row`** → Update order with delivery details + status = **\"Out for Delivery\"**.  \n  - Call **`Email_Send_To_Delivery_Company`** → Send dispatch email including:  \n    - Customer_Name  \n    - Phone_Number  \n    - Address  \n    - Final_Total to be collected  \n\n---\n\n### 3. Confirm to Customer  \n- Send a **final confirmation message**.  \n- Let the customer know their order is **on its way** ✅.  \n",
+        "height": 1296,
+        "width": 624,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1776,
+        -368
+      ],
+      "typeVersion": 1,
+      "id": "737826cc-4551-4ef7-a62d-d4e79b398736",
+      "name": "Sticky Note6"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "get_order_details",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator": {
+      "ai_tool": [
+        [
+          {
+            "node": "Orders",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "get_order_details",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gmail_Send": {
+      "ai_tool": [
+        [
+          {
+            "node": "Orders",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google_Sheet_Query": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calculator1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "get_order_details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delivery": {
+      "ai_tool": [
+        [
+          {
+            "node": "get_order_details",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Orders": {
+      "ai_tool": [
+        [
+          {
+            "node": "get_order_details",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Cancelation": {
+      "ai_tool": [
+        [
+          {
+            "node": "get_order_details",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Orders",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google_Sheets_Add_Row": {
+      "ai_tool": [
+        [
+          {
+            "node": "Orders",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google_Sheets_Update_Row": {
+      "ai_tool": [
+        [
+          {
+            "node": "Delivery",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email_Send_To_Delivery_Company": {
+      "ai_tool": [
+        [
+          {
+            "node": "Delivery",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google_Sheets_Find_Order": {
+      "ai_tool": [
+        [
+          {
+            "node": "Cancelation",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google_Sheets_Update_Status": {
+      "ai_tool": [
+        [
+          {
+            "node": "Cancelation",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Email_Send_Cancellation_Notice": {
+      "ai_tool": [
+        [
+          {
+            "node": "Cancelation",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model3": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Cancelation",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model4": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Delivery",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "7dff70e6-26f4-4bf9-b668-9f6cdbddcab2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d582c6d9abbb88f361ce5586df1bb470a0ec28834901a8c3ab1164fc8a54753e"
+  },
+  "id": "3eA9ft8TN6agXpVZ",
+  "tags": []
+}
