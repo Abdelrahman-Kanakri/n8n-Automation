@@ -31,7 +31,7 @@
       "name": "Google Drive Trigger",
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "9WyrDXmzlVHcAJt0",
+          "id": "YOUR_CREDENTIALS",
           "name": "Google Drive account"
         }
       }
@@ -81,7 +81,7 @@
       "name": "Download file",
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "9WyrDXmzlVHcAJt0",
+          "id": "YOUR_CREDENTIALS",
           "name": "Google Drive account"
         }
       }
@@ -140,7 +140,7 @@
       "name": "Supabase Vector Store",
       "credentials": {
         "supabaseApi": {
-          "id": "aSCOKIjWv8TyEyX5",
+          "id": "YOUR_CREDENTIALS",
           "name": "Supabase account"
         }
       }
@@ -159,7 +159,7 @@
       "name": "Embeddings OpenAI",
       "credentials": {
         "openAiApi": {
-          "id": "Go7mIBNq204ylPlN",
+          "id": "YOUR_CREDENTIALS",
           "name": "OpenAi account"
         }
       }
@@ -207,7 +207,7 @@
       "name": "Google Gemini Chat Model",
       "credentials": {
         "googlePalmApi": {
-          "id": "sRapiLHJnkcGznmE",
+          "id": "YOUR_CREDENTIALS",
           "name": "Google Gemini(PaLM) Api account"
         }
       }
@@ -247,7 +247,7 @@
       "name": "Supabase Vector Store1",
       "credentials": {
         "supabaseApi": {
-          "id": "aSCOKIjWv8TyEyX5",
+          "id": "YOUR_CREDENTIALS",
           "name": "Supabase account"
         }
       }
@@ -266,7 +266,7 @@
       "name": "Embeddings OpenAI1",
       "credentials": {
         "openAiApi": {
-          "id": "Go7mIBNq204ylPlN",
+          "id": "YOUR_CREDENTIALS",
           "name": "OpenAi account"
         }
       }
