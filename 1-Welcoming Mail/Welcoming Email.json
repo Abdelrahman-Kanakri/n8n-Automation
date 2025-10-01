@@ -1,0 +1,235 @@
+ {
+  "name": "Welcoming Email",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "New Customer",
+        "formDescription": "Welcome to Jordan!",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "First Name",
+              "placeholder": "e.g. Alex ",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Last Name",
+              "placeholder": "e.g. Jason",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "placeholder": "e.g. youremail@gmail.com",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Phone Number",
+              "fieldType": "number"
+            },
+            {
+              "fieldLabel": "Level?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "1"
+                  },
+                  {
+                    "option": "2"
+                  },
+                  {
+                    "option": "3"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        0,
+        -16
+      ],
+      "id": "fb5fc002-a4f6-48f4-b267-a4db3678a65c",
+      "name": "On form submission",
+      "webhookId": "a6040a00-f9fa-414c-9c1b-4513030b5cb1"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $json.Email }}",
+        "subject": "=Welcome to Jordan {{ $json['First Name'] }}",
+        "message": "=Welcome to Jordan {{ $json['First Name'] }}, you have been selected to be a new member in a community",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        224,
+        -176
+      ],
+      "id": "cd5e541a-204a-4525-9ba2-04e7dee9860c",
+      "name": "Send a message",
+      "webhookId": "f1f77137-3350-47db-a72a-a9ebc86eb148",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_CREDENTIAL",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "NewMemeber@organization_domain",
+        "subject": "New Member Added",
+        "message": "=New memeber has been added\n{{ $json['First Name'] }} {{ $json['Last Name']}} <br>\n{{ $json.Email }}  <br>\n{{ $json['Phone Number'] }} <br>",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        144
+      ],
+      "id": "acf2feec-56d4-4d57-85c9-24271711768d",
+      "name": "Send a message1",
+      "webhookId": "03951001-91ea-4af3-b8c5-8b6da70414c4",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "YOUR_CREDENTIAL",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "DocumentID",
+          "mode": "list",
+          "cachedResultName": "n8n file",
+          "cachedResultUrl": "Sheet_Link"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1qTSloa8q7t7lBv4pYS0DwWqftY2tSjYT6U19n6BXT-g/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json['First Name'] }} {{ $json['Last Name'] }}",
+            "Email ": "={{ $json.Email }}",
+            "Phone Number": "={{ $json['Phone Number'] }}",
+            "Course Level": "={{ $json['Level?'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email ",
+              "displayName": "Email ",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone Number",
+              "displayName": "Phone Number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Course Level",
+              "displayName": "Course Level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        384,
+        -32
+      ],
+      "id": "66e086ec-107a-42af-b3f2-1b37c8dcf1c2",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "YOUR_CREDENTIAL",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send a message1",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "b90480f9-6fe2-446d-81f6-2f4f7f7e24a1",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d582c6d9abbb88f361ce5586df1bb470a0ec28834901a8c3ab1164fc8a54753e"
+  },
+  "id": "IX6hxrr0VUQruxmN",
+  "tags": []
+}
