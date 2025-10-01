@@ -64,7 +64,7 @@
       "name": "Upload file",
       "credentials": {
         "googleDriveOAuth2Api": {
-          "id": "9WyrDXmzlVHcAJt0",
+          "id": "YOUR_CREDENTIALS",
           "name": "Google Drive account"
         }
       }
@@ -100,7 +100,7 @@
       "name": "Google Gemini Chat Model",
       "credentials": {
         "googlePalmApi": {
-          "id": "sRapiLHJnkcGznmE",
+          "id": "YOUR_CREDENTIALS",
           "name": "Google Gemini(PaLM) Api account"
         }
       }
@@ -174,7 +174,7 @@
       "name": "candidates",
       "credentials": {
         "googleSheetsOAuth2Api": {
-          "id": "s31y9wde8YyCl8PY",
+          "id": "YOUR_CREDENTIALS",
           "name": "Google Sheets account"
         }
       }
