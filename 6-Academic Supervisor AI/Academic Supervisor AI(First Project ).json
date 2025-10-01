@@ -33,7 +33,7 @@
       "name": "Google Gemini Chat Model",
       "credentials": {
         "googlePalmApi": {
-          "id": "sRapiLHJnkcGznmE",
+          "id": "YOUR_CREDENTIALS",
           "name": "Google Gemini(PaLM) Api account"
         }
       }
@@ -71,7 +71,7 @@
       "webhookId": "bf231354-8d81-44df-9bcc-a14f0ccfa537",
       "credentials": {
         "telegramApi": {
-          "id": "Xb0O6SUWlclwCXGg",
+          "id": "YOUR_CREDENTIALS",
           "name": "Telegram account"
         }
       }
@@ -95,7 +95,7 @@
       "webhookId": "45b76af1-8a10-445a-8d8c-90b959c32b33",
       "credentials": {
         "telegramApi": {
-          "id": "Xb0O6SUWlclwCXGg",
+          "id": "YOUR_CREDENTIALS",
           "name": "Telegram account"
         }
       }
