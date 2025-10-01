@@ -1,0 +1,271 @@
+{
+  "name": "Application Evaluation",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Canditates ",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "What is your name?",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "What is your Email?",
+              "fieldType": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Attach your Resume",
+              "fieldType": "file",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.3,
+      "position": [
+        368,
+        -16
+      ],
+      "id": "1e1f8427-0186-4884-ae7e-513ac1059747",
+      "name": "On form submission",
+      "webhookId": "cf19e0b3-220e-499c-bfb1-78163b6929e9"
+    },
+    {
+      "parameters": {
+        "inputDataFieldName": "=Attach_your_Resume",
+        "name": "={{ $json['Attach your Resume'][0].filename }}",
+        "driveId": {
+          "__rl": true,
+          "value": "My Drive",
+          "mode": "list",
+          "cachedResultName": "My Drive",
+          "cachedResultUrl": "https://drive.google.com/drive/my-drive"
+        },
+        "folderId": {
+          "__rl": true,
+          "value": "1pcRbcrlvjMPcsZbbn59PUHwhOfGfz3UJ",
+          "mode": "list",
+          "cachedResultName": "N8n",
+          "cachedResultUrl": "https://drive.google.com/drive/folders/1pcRbcrlvjMPcsZbbn59PUHwhOfGfz3UJ"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleDrive",
+      "typeVersion": 3,
+      "position": [
+        592,
+        -176
+      ],
+      "id": "aac15338-e98c-4dc8-b9ae-ba7f3f773689",
+      "name": "Upload file",
+      "credentials": {
+        "googleDriveOAuth2Api": {
+          "id": "9WyrDXmzlVHcAJt0",
+          "name": "Google Drive account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=Evaluate this candicated: \n\n{{ $json.text }}\n",
+        "options": {
+          "systemMessage": "=Role\nYou are an intelligent AI assistant specialized in evaluating candidates for web development positions. Your primary goal is to assess a candidate's suitability based on their resume and a given job description, and then log the evaluation results.\n\nBehavior\nYou will perform a structured evaluation of a candidate's qualifications. Your output should be a detailed, well-organized summary of your findings in Markdown format.\n\nDate and Time: {{ $now }}\nInstructions\nJob Description Analysis: Carefully read the provided job description to understand the core responsibilities, required skills, and preferred qualifications. Pay close attention to keywords, technologies, and years of experience mentioned.\n\nResume Evaluation: Analyze the candidate's resume or CV. Identify all skills, projects, and relevant experience.\n\nEvaluation Metrics & Techniques:\n\nATS Matching Score: Calculate a percentage score that reflects the alignment of the candidate's resume with the job description.\n\nRequired Skills: Assign a higher weight to skills listed in the \"Required Skills\" section. A candidate who possesses a skill like \"React\" when it's required receives a significant score boost.\n\nExperience: Give weight to the number of years of professional experience as specified in the job description.\n\nPreferred Qualifications: Award bonus points for skills from the \"Preferred Qualifications\" section. While not mandatory, they indicate a strong candidate.\n\nKeyword Matching: Use a simple count of matching keywords from the job description found in the resume to form the basis of the percentage.\n\nProject and Portfolio Quality: If a portfolio or project links are available, evaluate the quality, complexity, and relevance of the work. This is a qualitative measure to supplement the ATS score.\n\nSoft Skills and Non-Technical Experience: Look for keywords related to teamwork, communication, and problem-solving, which are often listed in \"Key Responsibilities.\"\n\nOutput Generation:\n\nAfter performing the evaluation, use the candidates tool to log the candidate's name, email, and the ATS matching percentage.\n\nYour final output must be a Markdown summary that includes the ATS matching percentage and a brief, bulleted list of key findings, such as strengths and weaknesses.\n\nTools\ncandidates\nUse this tool to add a new row to a Google Spreadsheet. The row must contain the candidate's name, email, and the ATS matching percentage. You must call this tool every time you process a new candidate.\n\nCalculator\nUse this tool to calculate the ATS matching percent based on the criteria outlined in the Evaluation Metrics & Techniques section.\n\n\n\n\n\n\n\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        816,
+        -16
+      ],
+      "id": "24186e2f-5a63-44f2-9e3f-026564f7cd45",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        752,
+        208
+      ],
+      "id": "08112289-9225-4641-9339-3e9904221524",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "sRapiLHJnkcGznmE",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "1bmQBpEmCBuZ2-WqBh5tMFcOTXvRf9ZZgmVc61vqoGIo",
+          "mode": "list",
+          "cachedResultName": "Most Fitted ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bmQBpEmCBuZ2-WqBh5tMFcOTXvRf9ZZgmVc61vqoGIo/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1bmQBpEmCBuZ2-WqBh5tMFcOTXvRf9ZZgmVc61vqoGIo/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Match (in Percent)": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Match__in_Percent_', ``, 'string') }}",
+            "Name": "={{ $('On form submission').item.json['What is your name?'] }}",
+            "Email": "={{ $('On form submission').item.json['What is your Email?'] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Match (in Percent)",
+              "displayName": "Match (in Percent)",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        976,
+        192
+      ],
+      "id": "508a4491-e1c3-4e98-9594-307ba756f712",
+      "name": "candidates",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "s31y9wde8YyCl8PY",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "binaryPropertyName": "Attach_your_Resume",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        592,
+        -16
+      ],
+      "id": "f969a553-e72a-417d-8b53-335d1b0e9b60",
+      "name": "Extract from File"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Upload file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload file": {
+      "main": [
+        []
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        []
+      ]
+    },
+    "candidates": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "97afac98-8850-468d-aadc-b2c79a7106c2",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d582c6d9abbb88f361ce5586df1bb470a0ec28834901a8c3ab1164fc8a54753e"
+  },
+  "id": "mlaF5jb4uRbsLqBe",
+  "tags": []
+}
