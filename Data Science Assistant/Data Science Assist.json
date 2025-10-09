@@ -32,7 +32,7 @@
       "name": "Google Gemini Chat Model",
       "credentials": {
         "googlePalmApi": {
-          "id": "ZLOwDDjxKwmqVYIT",
+          "id": "YOUR_CREDENRIALS",
           "name": "Google Gemini(PaLM) Api account"
         }
       }
@@ -70,7 +70,7 @@
       "name": "Insert Data",
       "credentials": {
         "mongoDb": {
-          "id": "9TjE2OwZZ7AazgOB",
+          "id": "YOUR_CREDENRIALS",
           "name": "MongoDB account"
         }
       }
@@ -91,7 +91,7 @@
       "name": "Aggregate Data",
       "credentials": {
         "mongoDb": {
-          "id": "9TjE2OwZZ7AazgOB",
+          "id": "YOUR_CREDENRIALS",
           "name": "MongoDB account"
         }
       }
@@ -112,7 +112,7 @@
       "name": "Delete Data",
       "credentials": {
         "mongoDb": {
-          "id": "9TjE2OwZZ7AazgOB",
+          "id": "YOUR_CREDENRIALS",
           "name": "MongoDB account"
         }
       }
@@ -133,7 +133,7 @@
       "name": "Find Data",
       "credentials": {
         "mongoDb": {
-          "id": "9TjE2OwZZ7AazgOB",
+          "id": "YOUR_CREDENRIALS",
           "name": "MongoDB account"
         }
       }
@@ -156,7 +156,7 @@
       "name": "Find & Replace Data",
       "credentials": {
         "mongoDb": {
-          "id": "9TjE2OwZZ7AazgOB",
+          "id": "YOUR_CREDENRIALS",
           "name": "MongoDB account"
         }
       }
@@ -179,7 +179,7 @@
       "name": "Find & Update Data",
       "credentials": {
         "mongoDb": {
-          "id": "9TjE2OwZZ7AazgOB",
+          "id": "YOUR_CREDENRIALS",
           "name": "MongoDB account"
         }
       }
@@ -202,7 +202,7 @@
       "name": "Update Data",
       "credentials": {
         "mongoDb": {
-          "id": "9TjE2OwZZ7AazgOB",
+          "id": "YOUR_CREDENRIALS",
           "name": "MongoDB account"
         }
       }
@@ -237,7 +237,7 @@
       "name": "Google Gemini Chat Model1",
       "credentials": {
         "googlePalmApi": {
-          "id": "ZLOwDDjxKwmqVYIT",
+          "id": "YOUR_CREDENRIALS",
           "name": "Google Gemini(PaLM) Api account"
         }
       }
@@ -270,7 +270,7 @@
       "name": "Google Gemini Chat Model2",
       "credentials": {
         "googlePalmApi": {
-          "id": "ZLOwDDjxKwmqVYIT",
+          "id": "YOUR_CREDENRIALS",
           "name": "Google Gemini(PaLM) Api account"
         }
       }
@@ -318,7 +318,7 @@
       "name": "Get a record",
       "credentials": {
         "airtableTokenApi": {
-          "id": "vHkUCxSlGzXbGubp",
+          "id": "YOUR_CREDENRIALS",
           "name": "Airtable Personal Access Token account"
         }
       }
@@ -441,7 +441,7 @@
       "name": "Create a record",
       "credentials": {
         "airtableTokenApi": {
-          "id": "vHkUCxSlGzXbGubp",
+          "id": "YOUR_CREDENRIALS",
           "name": "Airtable Personal Access Token account"
         }
       }
@@ -564,7 +564,7 @@
       "name": "Create or update a record",
       "credentials": {
         "airtableTokenApi": {
-          "id": "vHkUCxSlGzXbGubp",
+          "id": "YOUR_CREDENRIALS",
           "name": "Airtable Personal Access Token account"
         }
       }
@@ -598,7 +598,7 @@
       "name": "Delete a record",
       "credentials": {
         "airtableTokenApi": {
-          "id": "vHkUCxSlGzXbGubp",
+          "id": "YOUR_CREDENRIALS",
           "name": "Airtable Personal Access Token account"
         }
       }
@@ -634,7 +634,7 @@
       "name": "Search a record",
       "credentials": {
         "airtableTokenApi": {
-          "id": "vHkUCxSlGzXbGubp",
+          "id": "YOUR_CREDENRIALS",
           "name": "Airtable Personal Access Token account"
         }
       }
@@ -757,7 +757,7 @@
       "name": "Update a record",
       "credentials": {
         "airtableTokenApi": {
-          "id": "vHkUCxSlGzXbGubp",
+          "id": "YOUR_CREDENRIALS",
           "name": "Airtable Personal Access Token account"
         }
       }
@@ -866,7 +866,7 @@
       "webhookId": "b3828afb-006b-4744-b5c7-b60b092c6935",
       "credentials": {
         "telegramApi": {
-          "id": "4TWEcrQ2yz0oxgbu",
+          "id": "YOUR_CREDENRIALS",
           "name": "AbdoData"
         }
       }
@@ -888,7 +888,7 @@
       "webhookId": "58ee11b2-e94b-4676-98cd-27a539601ba4",
       "credentials": {
         "telegramApi": {
-          "id": "4TWEcrQ2yz0oxgbu",
+          "id": "YOUR_CREDENRIALS",
           "name": "AbdoData"
         }
       }
@@ -1149,7 +1149,7 @@
       "name": "Supabase Vector Store",
       "credentials": {
         "supabaseApi": {
-          "id": "3i1M2QkD2fW7G7ut",
+          "id": "YOUR_CREDENRIALS",
           "name": "Supabase account"
         }
       }
@@ -1166,7 +1166,7 @@
       "name": "Embeddings Google Gemini",
       "credentials": {
         "googlePalmApi": {
-          "id": "ZLOwDDjxKwmqVYIT",
+          "id": "YOUR_CREDENRIALS",
           "name": "Google Gemini(PaLM) Api account"
         }
       }
@@ -1207,7 +1207,7 @@
       "name": "Supabase Vector Store1",
       "credentials": {
         "supabaseApi": {
-          "id": "3i1M2QkD2fW7G7ut",
+          "id": "YOUR_CREDENRIALS",
           "name": "Supabase account"
         }
       }
@@ -1224,7 +1224,7 @@
       "name": "Embeddings Google Gemini1",
       "credentials": {
         "googlePalmApi": {
-          "id": "ZLOwDDjxKwmqVYIT",
+          "id": "YOUR_CREDENRIALS",
           "name": "Google Gemini(PaLM) Api account"
         }
       }
@@ -1249,7 +1249,7 @@
       "webhookId": "9834d76d-79c9-4aac-8d93-f2823e244163",
       "credentials": {
         "telegramApi": {
-          "id": "4TWEcrQ2yz0oxgbu",
+          "id": "YOUR_CREDENRIALS",
           "name": "AbdoData"
         }
       }
