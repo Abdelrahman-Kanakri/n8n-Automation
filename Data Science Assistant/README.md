@@ -1,4 +1,4 @@
-# AI-Powered Data Science Assistant (n8n Workflow)
+# AI-Powered Data Science Assistant AbdoData (n8n Workflow)
 This repository contains an advanced n8n workflow for an AI-powered Data Science Assistant named AbdoData. This conversational agent can process and analyze data from various sources, answer questions about uploaded documents, and perform database operations on both SQL and NoSQL databases.
 <img width="941" height="739" alt="image" src="https://github.com/user-attachments/assets/775a35c5-5d76-4e6e-b851-3740d03b73b0" />
 
