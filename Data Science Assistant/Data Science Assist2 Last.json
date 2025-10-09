@@ -1,0 +1,1966 @@
+{
+  "name": "Data Science Assist2",
+  "nodes": [
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "=# Role\nYou are AbdoData, a highly specialized Data Scientist AI Agent. Your primary role is to assist users with data processing, analysis, and retrieval across various data sources. You are a conversational agent capable of understanding user requests and orchestrating specialized tools and a RAG (Retrieval-Augmented Generation) system to provide accurate and comprehensive answers.\n\n# Task\nYour main task is to respond to user inquiries by:\n\n* Understanding the intent: Determine if the user is asking about a previously uploaded document, performing a structured (SQL/Airtable) database operation, or an unstructured/semi-structured (NoSQL/MongoDB) database operation.\n\n* Delegating to Tools: Based on the intent, activate the most appropriate tool:\n\n* Supabase Vector Store (Retriever): If the user is asking questions about the content of a document they previously uploaded. This is your primary source for document-based knowledge.\n\n* NoSQL Specialist: If the user explicitly asks to manage or query data in an unstructured/semi-structured database (e.g., MongoDB, typically for documents, logs, flexible schemas).\n\n* SQL Specialist: If the user explicitly asks to manage or query data in a structured database (e.g., Airtable, for tables, records, fixed schemas).\n\n* Synthesizing Information: Combine information from different tools if necessary to formulate a complete answer.\n\n# Behaviour\n\n* Prioritize Document Context: If the user is asking a general question after uploading a file, first attempt to retrieve relevant information from the Supabase Vector Store. If enough context is found, use that to answer.\n\n* Explicit Tool Invocation: Only use the NoSQL Specialist or SQL Specialist if the user's request clearly indicates a database operation (e.g., \"Find records in Airtable\", \"Update a MongoDB document\").\n\n* Clarity and Precision: When delegating to a specialist, ensure all necessary parameters are inferred from the user's query and passed accurately.\n\n* Informative Responses: Provide clear and concise answers. If an operation results in an empty set, state that no data was found. If a database operation is successful, confirm it to the user.\n\n* Always ask for clarification if a request is ambiguous or requires more information to use a tool effectively.\n\n* Maintain Context: Remember previous turns in the conversation to build upon prior queries or uploaded documents.\n\n# Tools\nYou have access to the following powerful tools:\n\n## Supabase_Vector_Store1 (Retriever):\nUse this tool to search for answers within the documents a user has previously uploaded. This tool takes an embedding of the user's question and a filter for the user's chat_id to retrieve relevant text chunks from the user's knowledge base. Use this for all document-based questions.\n\n## NoSQL_Specialist:\nUse this tool to perform operations (Find, Insert, Update, Delete, Aggregate) on unstructured or semi-structured data sources (e.g., MongoDB collections). Delegate to this tool when the user requests database operations that fit a NoSQL context.\n\n## SQL_Specialist:\nUse this tool to perform operations (Get, Search, Create, Update, Delete) on structured data sources (e.g., Airtable tables). Delegate to this tool when the user requests database operations that fit a SQL/relational context.\n\n\n# When generating your final response, ensure that all Markdown formatting (such as *bold* or _italic_) is correctly and completely paired. Do not leave any formatting tags open."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -656,
+        1200
+      ],
+      "id": "6583f658-f542-4b4b-be05-d1705af068af",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -912,
+        1424
+      ],
+      "id": "7041675b-d8d5-49b3-9df5-833351f0c2e5",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ZLOwDDjxKwmqVYIT",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### NoSql Database (Unstructured Data/ SemiStrucutred)\n",
+        "height": 640,
+        "width": 656,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -80,
+        1168
+      ],
+      "typeVersion": 1,
+      "id": "d80de10a-abc8-483d-813d-1cf20fdd8a4d",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "collection": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Collection', ``, 'string') }}",
+        "fields": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Fields', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mongoDbTool",
+      "typeVersion": 1.2,
+      "position": [
+        112,
+        1568
+      ],
+      "id": "40d91a49-fa97-424d-ad6a-7eb2f2d52c80",
+      "name": "Insert Data",
+      "credentials": {
+        "mongoDb": {
+          "id": "9TjE2OwZZ7AazgOB",
+          "name": "MongoDB account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "aggregate",
+        "collection": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Collection', ``, 'string') }}",
+        "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query', ``, 'json') }}"
+      },
+      "type": "n8n-nodes-base.mongoDbTool",
+      "typeVersion": 1.2,
+      "position": [
+        240,
+        1552
+      ],
+      "id": "77b9e22b-4bcd-4fde-98ae-f6cc1ae37671",
+      "name": "Aggregate Data",
+      "credentials": {
+        "mongoDb": {
+          "id": "9TjE2OwZZ7AazgOB",
+          "name": "MongoDB account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "delete",
+        "collection": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Collection', ``, 'string') }}",
+        "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Delete_Query__JSON_Format_', ``, 'json') }}"
+      },
+      "type": "n8n-nodes-base.mongoDbTool",
+      "typeVersion": 1.2,
+      "position": [
+        384,
+        1568
+      ],
+      "id": "db9b7858-1bca-486b-9ff2-ba1ea931f80c",
+      "name": "Delete Data",
+      "credentials": {
+        "mongoDb": {
+          "id": "9TjE2OwZZ7AazgOB",
+          "name": "MongoDB account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "collection": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Collection', ``, 'string') }}",
+        "options": {},
+        "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query__JSON_Format_', ``, 'json') }}"
+      },
+      "type": "n8n-nodes-base.mongoDbTool",
+      "typeVersion": 1.2,
+      "position": [
+        80,
+        1408
+      ],
+      "id": "a1ec44a0-74a0-4208-b193-8fd18bcf53db",
+      "name": "Find Data",
+      "credentials": {
+        "mongoDb": {
+          "id": "9TjE2OwZZ7AazgOB",
+          "name": "MongoDB account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "findOneAndReplace",
+        "collection": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Collection', ``, 'string') }}",
+        "updateKey": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Update_Key', ``, 'string') }}",
+        "fields": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Fields', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mongoDbTool",
+      "typeVersion": 1.2,
+      "position": [
+        192,
+        1408
+      ],
+      "id": "fada7858-192f-4ffb-a613-89cc703a286f",
+      "name": "Find & Replace Data",
+      "credentials": {
+        "mongoDb": {
+          "id": "9TjE2OwZZ7AazgOB",
+          "name": "MongoDB account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "findOneAndUpdate",
+        "collection": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Collection', ``, 'string') }}",
+        "updateKey": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Update_Key', ``, 'string') }}",
+        "fields": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Fields', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mongoDbTool",
+      "typeVersion": 1.2,
+      "position": [
+        304,
+        1408
+      ],
+      "id": "1ed5e108-70f8-44be-86bb-01538d32d029",
+      "name": "Find & Update Data",
+      "credentials": {
+        "mongoDb": {
+          "id": "9TjE2OwZZ7AazgOB",
+          "name": "MongoDB account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "collection": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Collection', ``, 'string') }}",
+        "updateKey": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Update_Key', ``, 'string') }}",
+        "fields": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Fields', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mongoDbTool",
+      "typeVersion": 1.2,
+      "position": [
+        416,
+        1408
+      ],
+      "id": "480994dc-c0b4-46da-93db-09ed6c4b8e73",
+      "name": "Update Data",
+      "credentials": {
+        "mongoDb": {
+          "id": "9TjE2OwZZ7AazgOB",
+          "name": "MongoDB account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "content": "### SQL Database (Structured Data )\n\n",
+        "height": 640,
+        "width": 720,
+        "color": 5
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        608,
+        1168
+      ],
+      "typeVersion": 1,
+      "id": "9b2fcedd-8036-460a-be4c-94f5733522a8",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -32,
+        1376
+      ],
+      "id": "7a18673c-62ee-4a49-9a4e-bc7f736ac0f0",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ZLOwDDjxKwmqVYIT",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.message.text }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -16,
+        1568
+      ],
+      "id": "294cc64f-c048-4a42-94e9-ecf0edc4dee5",
+      "name": "Simple Memory1"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        752,
+        1536
+      ],
+      "id": "a6ab9f74-ccb4-427d-911b-c15c4bd11beb",
+      "name": "Google Gemini Chat Model2",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ZLOwDDjxKwmqVYIT",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.message.text }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        704,
+        1392
+      ],
+      "id": "f59889d6-b620-4250-87b2-8761d3f06287",
+      "name": "Simple Memory2"
+    },
+    {
+      "parameters": {
+        "base": {
+          "__rl": true,
+          "value": "applTUe1pSMLJk1ua",
+          "mode": "list",
+          "cachedResultName": "Data Scientist n8n",
+          "cachedResultUrl": "https://airtable.com/applTUe1pSMLJk1ua"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblVx1Ln5gZGW7XrA",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/applTUe1pSMLJk1ua/tblVx1Ln5gZGW7XrA"
+        },
+        "id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Record_ID', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        1008,
+        1536
+      ],
+      "id": "9db95f57-3126-47f7-bd37-186404b8f281",
+      "name": "Get a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "vHkUCxSlGzXbGubp",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "applTUe1pSMLJk1ua",
+          "mode": "list",
+          "cachedResultName": "Data Scientist n8n",
+          "cachedResultUrl": "https://airtable.com/applTUe1pSMLJk1ua"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblVx1Ln5gZGW7XrA",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/applTUe1pSMLJk1ua/tblVx1Ln5gZGW7XrA"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Assignee",
+              "displayName": "Assignee",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Todo",
+                  "value": "Todo"
+                },
+                {
+                  "name": "In progress",
+                  "value": "In progress"
+                },
+                {
+                  "name": "Done",
+                  "value": "Done"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Attachments",
+              "displayName": "Attachments",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Attachment Summary",
+              "displayName": "Attachment Summary",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        880,
+        1552
+      ],
+      "id": "2d7a46a0-eebd-4c7e-89b4-80d6daf6eb97",
+      "name": "Create a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "vHkUCxSlGzXbGubp",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "upsert",
+        "base": {
+          "__rl": true,
+          "value": "applTUe1pSMLJk1ua",
+          "mode": "list",
+          "cachedResultName": "Data Scientist n8n",
+          "cachedResultUrl": "https://airtable.com/applTUe1pSMLJk1ua"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblVx1Ln5gZGW7XrA",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/applTUe1pSMLJk1ua/tblVx1Ln5gZGW7XrA"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Assignee",
+              "displayName": "Assignee",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Todo",
+                  "value": "Todo"
+                },
+                {
+                  "name": "In progress",
+                  "value": "In progress"
+                },
+                {
+                  "name": "Done",
+                  "value": "Done"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Attachments",
+              "displayName": "Attachments",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Attachment Summary",
+              "displayName": "Attachment Summary",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        880,
+        1392
+      ],
+      "id": "ee51fef6-3dd1-4833-a2e6-50998e355fa3",
+      "name": "Create or update a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "vHkUCxSlGzXbGubp",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "deleteRecord",
+        "base": {
+          "__rl": true,
+          "value": "applTUe1pSMLJk1ua",
+          "mode": "list",
+          "cachedResultName": "Data Scientist n8n",
+          "cachedResultUrl": "https://airtable.com/applTUe1pSMLJk1ua"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblVx1Ln5gZGW7XrA",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/applTUe1pSMLJk1ua/tblVx1Ln5gZGW7XrA"
+        },
+        "id": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Record_ID', ``, 'string') }}"
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        992,
+        1392
+      ],
+      "id": "3bcfddaa-0b55-4597-b02d-c081279a24d1",
+      "name": "Delete a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "vHkUCxSlGzXbGubp",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "search",
+        "base": {
+          "__rl": true,
+          "value": "applTUe1pSMLJk1ua",
+          "mode": "list",
+          "cachedResultName": "Data Scientist n8n",
+          "cachedResultUrl": "https://airtable.com/applTUe1pSMLJk1ua"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblVx1Ln5gZGW7XrA",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/applTUe1pSMLJk1ua/tblVx1Ln5gZGW7XrA"
+        },
+        "filterByFormula": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Filter_By_Formula', ``, 'string') }}",
+        "returnAll": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Return_All', ``, 'boolean') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        1120,
+        1536
+      ],
+      "id": "e749306e-5e93-45e9-a641-d090f1d85ccc",
+      "name": "Search a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "vHkUCxSlGzXbGubp",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "applTUe1pSMLJk1ua",
+          "mode": "list",
+          "cachedResultName": "Data Scientist n8n",
+          "cachedResultUrl": "https://airtable.com/applTUe1pSMLJk1ua"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblVx1Ln5gZGW7XrA",
+          "mode": "list",
+          "cachedResultName": "Table 1",
+          "cachedResultUrl": "https://airtable.com/applTUe1pSMLJk1ua/tblVx1Ln5gZGW7XrA"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Notes",
+              "displayName": "Notes",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Assignee",
+              "displayName": "Assignee",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Status",
+              "displayName": "Status",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "Todo",
+                  "value": "Todo"
+                },
+                {
+                  "name": "In progress",
+                  "value": "In progress"
+                },
+                {
+                  "name": "Done",
+                  "value": "Done"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Attachments",
+              "displayName": "Attachments",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "array",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Attachment Summary",
+              "displayName": "Attachment Summary",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtableTool",
+      "typeVersion": 2.1,
+      "position": [
+        1104,
+        1392
+      ],
+      "id": "45a4e5fa-a1ed-465f-9e97-e53c63f35a72",
+      "name": "Update a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "vHkUCxSlGzXbGubp",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "binaryPropertyName": "=data",
+        "options": {
+          "encoding": "utf-8"
+        }
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        0,
+        -128
+      ],
+      "id": "bce0f36b-420e-4cdd-a5c1-3cbd63a67151",
+      "name": "CSV Extractor"
+    },
+    {
+      "parameters": {
+        "operation": "xls",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        0,
+        64
+      ],
+      "id": "eca266ae-58dc-41a9-b9b4-1bcaac9112bc",
+      "name": "XLS Extractor"
+    },
+    {
+      "parameters": {
+        "operation": "pdf",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        0,
+        640
+      ],
+      "id": "a504b58e-3ef5-4a97-9ead-80ef1e6d2a8d",
+      "name": "PDF Extractor"
+    },
+    {
+      "parameters": {
+        "operation": "fromJson",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        0,
+        832
+      ],
+      "id": "0199b51f-6aa4-4218-80c6-778aace45a4c",
+      "name": "JSON Extractor"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        0,
+        448
+      ],
+      "id": "13186b40-1469-48a4-a356-36154cf2ebf6",
+      "name": "Text Extractor"
+    },
+    {
+      "parameters": {
+        "operation": "xlsx",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [
+        0,
+        256
+      ],
+      "id": "bffbf95a-0042-41f9-bf7d-a65e46475231",
+      "name": "XLSX Extractor"
+    },
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -1200,
+        592
+      ],
+      "id": "bc51eda1-11e7-446c-b1a7-fb8a01cba359",
+      "name": "Telegram Trigger",
+      "webhookId": "b3828afb-006b-4744-b5c7-b60b092c6935",
+      "credentials": {
+        "telegramApi": {
+          "id": "4TWEcrQ2yz0oxgbu",
+          "name": "AbdoData"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.document.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -592,
+        496
+      ],
+      "id": "5bb5c341-e475-440c-9b81-b3de5ab27f8d",
+      "name": "Get a file",
+      "webhookId": "58ee11b2-e94b-4676-98cd-27a539601ba4",
+      "credentials": {
+        "telegramApi": {
+          "id": "4TWEcrQ2yz0oxgbu",
+          "name": "AbdoData"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c78ec9ac-f8b0-4630-aef6-2dbfcca14375",
+                    "leftValue": "={{ $json.result.file_path.split('.').pop().toLowerCase() }}",
+                    "rightValue": "csv",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "CSV"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "78b0b4e2-e533-42ed-98d2-202123508830",
+                    "leftValue": "={{ $json.result.file_path.split('.').pop().toLowerCase() }}",
+                    "rightValue": "xls",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "XLS"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "6dfcf252-7d80-4ee1-90f2-6d51d4f9d7fd",
+                    "leftValue": "={{ $json.result.file_path.split('.').pop().toLowerCase() }}",
+                    "rightValue": "xlsx",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "XLSX"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.result.file_path.split('.').pop().toLowerCase() }}",
+                    "rightValue": "txt",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "9d6d7a54-fa49-4720-9370-065e1db70f26"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "TXT"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "7ae5c2de-6eac-4316-99b4-68a1ed4f0321",
+                    "leftValue": "={{ $json.result.file_path.split('.').pop().toLowerCase() }}",
+                    "rightValue": "=pdf",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "PDF"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "3b09521c-8726-452d-91aa-bf92b2d0b95c",
+                    "leftValue": "={{ $json.result.file_path.split('.').pop().toLowerCase() }}",
+                    "rightValue": "json",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "JSON"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -304,
+        432
+      ],
+      "id": "1a3abc9d-8c9b-4135-b565-df34016c5adc",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "jsCode": "// This node converts the structured data from a CSV/XLSX file\n// into a single Markdown table for the AI to analyze.\n\n// We will only process the first 100 rows to avoid exceeding the AI's token limit.\nconst itemsToProcess = items.slice(0, 100);\n\nconst firstItem = itemsToProcess[0].json;\nconst headers = Object.keys(firstItem);\nconst headerLine = `| ${headers.join(' | ')} |`;\nconst separatorLine = `| ${headers.map(() => '---').join(' | ')} |`;\n\nconst rows = itemsToProcess.map(item => {\n  return `| ${headers.map(header => item.json[header]).join(' | ')} |`;\n});\n\nconst markdownTable = [headerLine, separatorLine, ...rows].join('\\n');\n\nreturn [{\n  json: {\n    fullText: markdownTable\n  }\n}];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        272,
+        112
+      ],
+      "id": "1739bee1-9d2d-406e-8659-59c6ce283be5",
+      "name": "Tabular Code"
+    },
+    {
+      "parameters": {
+        "jsCode": "// In Code node after PDF or TXT Extractor\nconst textChunks = items.map(item => item.json.text);\nconst fullText = textChunks.join('\\n\\n'); // Join with double newline for paragraphs\nreturn [{ json: { fullText: fullText } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        272,
+        480
+      ],
+      "id": "c4165582-0096-439f-8111-65f42df351ab",
+      "name": "Non-Tabular Code"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        560,
+        304
+      ],
+      "id": "14431a42-9aa3-43dd-b4b2-da68e1be304c",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "dataType": "binary",
+        "textSplittingMode": "custom",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.documentDefaultDataLoader",
+      "typeVersion": 1.1,
+      "position": [
+        928,
+        448
+      ],
+      "id": "8f948d8c-9018-4995-ba5f-d4efd5bba2f3",
+      "name": "Default Data Loader"
+    },
+    {
+      "parameters": {
+        "chunkOverlap": 100,
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.textSplitterRecursiveCharacterTextSplitter",
+      "typeVersion": 1,
+      "position": [
+        1008,
+        656
+      ],
+      "id": "fb065956-e8d1-4caf-953c-175111357b89",
+      "name": "Recursive Character Text Splitter"
+    },
+    {
+      "parameters": {
+        "mode": "insert",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "embeddingBatchSize": 20,
+        "options": {
+          "queryName": "match_documents"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        832,
+        224
+      ],
+      "id": "1f07f2dc-0c8b-4dbe-bdb1-175160c1865c",
+      "name": "Supabase Vector Store",
+      "credentials": {
+        "supabaseApi": {
+          "id": "3i1M2QkD2fW7G7ut",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        800,
+        448
+      ],
+      "id": "2067b4df-e4d6-4c19-ae85-d8b1d46c156b",
+      "name": "Embeddings Google Gemini",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ZLOwDDjxKwmqVYIT",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.message.text }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -784,
+        1424
+      ],
+      "id": "7d6e88e3-967a-43da-a8b5-f508d81504a2",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "use this tool as your knowledge base ",
+        "tableName": {
+          "__rl": true,
+          "value": "documents",
+          "mode": "list",
+          "cachedResultName": "documents"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStoreSupabase",
+      "typeVersion": 1.3,
+      "position": [
+        -624,
+        1424
+      ],
+      "id": "43ee56df-908f-49ba-88c5-0261e4b6347d",
+      "name": "Supabase Vector Store1",
+      "credentials": {
+        "supabaseApi": {
+          "id": "3i1M2QkD2fW7G7ut",
+          "name": "Supabase account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "@n8n/n8n-nodes-langchain.embeddingsGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -656,
+        1584
+      ],
+      "id": "df8b4c46-15b9-499e-8cd2-412ea219e76a",
+      "name": "Embeddings Google Gemini1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ZLOwDDjxKwmqVYIT",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        -304,
+        1200
+      ],
+      "id": "a33f6ea0-5338-4509-a253-2a49b5d63593",
+      "name": "Send a text message",
+      "webhookId": "9834d76d-79c9-4aac-8d93-f2823e244163",
+      "credentials": {
+        "telegramApi": {
+          "id": "4TWEcrQ2yz0oxgbu",
+          "name": "AbdoData"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "Your are a NoSQL Specialist that can perform many task referred to NoSQL tasks and processes",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "=# Role\nYou are a NoSQL Database Specialist. Your expertise is in managing, querying, and manipulating data within MongoDB, which is ideal for unstructured and semi-structured data like JSON documents, logs, and complex objects.\n\n# Task\nYour primary task is to execute database operations on a MongoDB collection as requested by the main agent. You must translate a natural language command into a specific action by choosing the correct tool and inferring its parameters. Your goal is to handle data operations with precision and efficiency.\n\n# Behaviour\n\n*Infer Parameters: You must infer all necessary parameters for your tools from the request, such as collection, query, fields, and sorting instructions.\n\n* Be Precise: When finding or deleting data, construct the JSON query carefully. When sorting, correctly formulate the sort object (e.g., { \"fieldName\": 1 } for ascending, { \"fieldName\": -1 } for descending).\n\n* Clarify Ambiguity: If a required parameter is missing (e.g., \"delete a record\" without specifying which one), you must ask for the necessary details.\n\n* Be Concise: Return only the result of the database operation or a simple confirmation message (e.g., \"Successfully inserted 1 record.\"). Do not add conversational fluff.\n\n## Tools\nYou have access to the following MongoDB tools. Use them strictly as described:\n\n## Find_Data:\nFinds documents. Requires a Collection and a Query in JSON format. The query can include a sort object.\n\n## Insert_Data:\nInserts new documents. Requires a Collection and the Fields (the document data) to insert.\n\n## Delete_Data:\nDeletes documents matching a query. Requires a Collection and a Delete_Query__JSON_Format_.\n\n## Update_Data:\nModifies fields in existing documents. Requires a Collection, an Update_Key to identify the document(s), and the Fields to update.\n\n## Aggregate_Data:\nPerforms complex operations like grouping and summing. Requires a Collection and a Query representing the aggregation pipeline.\n\n## Find_And_Update_Data:\nFinds a single document and atomically updates it. Requires a Collection, an Update_Key, and the Fields to update.\n\n## Find_And_Replace_Data:\nFinds a single document and completely replaces it. Requires a Collection, an Update_Key, and the Fields for the new document."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        128,
+        1232
+      ],
+      "id": "509165aa-c5c8-41d8-8022-379ea3a46d21",
+      "name": "NoSQL_Specialist"
+    },
+    {
+      "parameters": {
+        "toolDescription": "Your are a SQL Specialist that can perform many task referred to SQL tasks and processes",
+        "text": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Prompt__User_Message_', ``, 'string') }}",
+        "options": {
+          "systemMessage": "=# Role\nYou are a Structured Data Specialist. Your expertise is in managing records within Airtable, which functions like a powerful SQL-style database with clearly defined rows and columns.\n\n# Task\nYour primary task is to execute record-level operations on an Airtable base as instructed by the main agent. You must translate a natural language command (e.g., \"Find the user with this ID,\" \"Create a new task\") into a specific action by choosing the correct tool and inferring its parameters.\n\n# Behaviour\n\n* Infer Parameters: You must infer all necessary parameters from the request, such as Record_ID, Filter_By_Formula, and the data for columns.\n\n* Handle Sorting: When asked to sort, you must use the Search_a_record tool and correctly identify the Field and Direction ('asc' for ascending or 'desc' for descending).\n\n* Clarify Ambiguity: If a required parameter is missing (e.g., \"delete a record\" without a Record_ID), you must ask for the necessary details.\n\n* Be Concise: Your response should only be the result of the database operation or a simple confirmation (e.g., \"1 record created successfully.\"). Do not add conversational fluff.\n\n# Tools\nYou have access to the following Airtable tools. Use them strictly as described:\n\n## Get_a_record:\nRetrieves a single record by its unique ID. Requires a Record_ID.\n\n## Search_a_record:\nSearches for multiple records using a formula. Use this for filtering and sorting. Requires a Filter_By_Formula.\n\n## Create_a_record:\nCreates one new record. Requires the data for the record's columns.\n\n## Update_a_record:\nUpdates specific fields in an existing record. Requires the Record_ID and the column data to update.\n\n## Create_or_update_a_record:\nCreates a new record or updates an existing one (upsert).\n\n## Delete_a_record:\nDeletes a single record. Requires a Record_ID"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agentTool",
+      "typeVersion": 2.2,
+      "position": [
+        848,
+        1264
+      ],
+      "id": "c889797e-6f9c-4b5a-9b72-b4047b3b00f0",
+      "name": "SQL_Specialist"
+    },
+    {
+      "parameters": {
+        "content": "# 1)  Workflow Initiation and Input Handling\nThis section covers the initial trigger and the routing logic based on the type of input received from the user.\n\n## Telegram Trigger (On Message)\nThis node is the entry point for the entire workflow. It activates and begins an execution whenever any new message—either plain text or a file—is sent to the connected Telegram bot.\n\n## Switch (Input Type Router)\nThis node inspects the incoming data from the trigger and routes the workflow down one of two distinct paths. It checks if the message contains a document (file) or plain text, directing the flow to the appropriate logic branch.\n\n## Telegram (Get File)\nIf the Switch node determines the input is a document, this node is called. It connects to Telegram's API to download the file's binary data, making it available for the data extraction and processing steps that follow.",
+        "height": 624,
+        "width": 880
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        1728,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "f8a1ddfb-fc44-4e61-8b83-d45e905f23ba",
+      "name": "Sticky Note2"
+    },
+    {
+      "parameters": {
+        "content": "# 2. Data Extraction and Standardization\nThis stage is responsible for processing an uploaded file. It extracts the raw information and transforms it into a standardized text format that the downstream systems can handle.\n\n## Switch (File Type Router)\nThis second switch routes the downloaded file to the appropriate extractor based on its file extension (e.g., .pdf, .csv, .xlsx).\n\n## Extractor Nodes\nA dedicated extractor exists for each file type. The extractor's job is to parse the raw file and convert its contents into usable data—either structured JSON (from CSV/XLSX) or raw text (from PDF/TXT).\n\n## Code Nodes (Standardization)\nThese nodes receive the extracted data and reformat it into a single, consistent format. Structured data is converted into a clean Markdown table, while unstructured data is consolidated into a plain text block. This ensures a predictable output for the next stage.\n\n## Merge Node (Unification)\nThis node takes the output from either the \"structured\" or \"unstructured\" code path and merges them into a single, unified data stream. This is crucial for ensuring the rest of the workflow can handle the data in the exact same way, regardless of the original file type.\n",
+        "height": 624,
+        "width": 944
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2624,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "4d8704ce-bf10-472f-974d-c401aa0aeb28",
+      "name": "Sticky Note3"
+    },
+    {
+      "parameters": {
+        "content": "# 1)  Workflow Initiation and Input Handling\n## This section covers the initial trigger and the routing logic based on the type of input received from the user.\n\n\n",
+        "height": 416,
+        "width": 880
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1264,
+        368
+      ],
+      "typeVersion": 1,
+      "id": "951cda18-8fcf-4cee-a987-bd2aad0d7597",
+      "name": "Sticky Note4"
+    },
+    {
+      "parameters": {
+        "content": "# 3. Knowledge Base Creation (RAG Pipeline)\nThis pipeline takes the standardized text and ingests it into the AI's long-term memory, the Supabase Vector Store.\n\n## Text Splitter, Embeddings, and Supabase Vector Store\nThis chain of nodes forms the core of the Retrieval-Augmented Generation (RAG) system:\n\n- The standardized text is broken into smaller, meaningful chunks.\n\n- Each chunk is sent to the Google Gemini API to be converted into a numerical representation called an embedding.\n\n- The original text chunks and their corresponding embeddings are then stored in the Supabase Vector Store.\n\nThis process creates a searchable knowledge base where information can be retrieved based on its semantic meaning, not just simple keywords.",
+        "height": 624,
+        "width": 880
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        3584,
+        -64
+      ],
+      "typeVersion": 1,
+      "id": "abf7fc2c-ae00-4ae4-afb2-e06391a73df5",
+      "name": "Sticky Note5"
+    },
+    {
+      "parameters": {
+        "content": "# 4. AI Orchestration and Task Execution 🤖\nThis section details the conversational part of the workflow. It's managed by a central AI Agent that acts as an orchestrator, understanding user requests and delegating tasks to a set of specialized tools.\n\n## The Main AI Agent (Orchestrator)\nThis is the primary \"brain\" of the operation that the user interacts with. Its job is not to perform tasks itself, but to intelligently delegate them.\n\n### Process:\n\n* It receives the user's text message from the initial Switch node.\n\n* It analyzes the user's intent: Are they asking a question about a document, or are they requesting a database operation?\n\n* Based on the intent, it chooses and activates the correct specialist tool.\n\n* It receives the result back from the tool and formulates a final, human-friendly response to send back to the user via Telegram.\n\n#### Tool 1: The RAG System (Knowledge Retriever)\nNode: Supabase Vector Store\n\n* Purpose: This tool serves as the AI's long-term memory for all the documents that have been uploaded.\n\n* Function: When the user asks a question about a document, the Main Agent uses this tool to search the vector database. It finds the most relevant text chunks (filtered by the user's chat_id) and uses them as context to form an accurate answer.\n\n#### Tool 2: The NoSQL Specialist (MongoDB Agent)\n* Purpose: A dedicated sub-agent that is an expert in handling unstructured or semi-structured data operations in MongoDB.\n\n* Function: If the Main Agent determines a request is for MongoDB (e.g., \"insert these user logs\"), it passes the entire task to this specialist.\n\n* Capabilities: This agent has access to a full suite of MongoDB tools, including Find, Insert, Delete, Aggregate, Update, and more.\n\n#### Tool 3: The SQL Specialist (Airtable Agent)\n* Purpose: A dedicated sub-agent that is an expert in handling structured, table-based data in Airtable.\n\n* Function: If the Main Agent identifies a request for Airtable (e.g., \"create a new task record\" or \"search for a user\"), it delegates the task to this specialist.\n\n* Capabilities: This agent can use tools to Get, Search, Create, Update, and Delete records in an Airtable base.",
+        "height": 1056,
+        "width": 800
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        2640,
+        592
+      ],
+      "typeVersion": 1,
+      "id": "301735de-dd22-4373-9dd2-9f53bfb8b9a4",
+      "name": "Sticky Note6"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c427daab-94f6-443e-b12b-5120aa50805c",
+                    "leftValue": "={{ $json.message.document.file_id }}",
+                    "rightValue": "=true",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Doc"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ typeof($json.message.text ) }}",
+                    "rightValue": "=string",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "e6efad87-58c9-49a2-9360-4af8dd68a6ca"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Text"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        -976,
+        592
+      ],
+      "id": "18679eb9-4200-472f-b6d5-af36cca24eda",
+      "name": "Switch1"
+    },
+    {
+      "parameters": {
+        "content": "# 2 & 3) Data Extraction and Standardization/ Knowledge Base Creation (RAG Pipeline)\n## This section covers the initial trigger and the routing logic based on the type of input received from the user.\n\n\n",
+        "height": 1216,
+        "width": 1536,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -320,
+        -240
+      ],
+      "typeVersion": 1,
+      "id": "8084c702-b523-49e0-9d2c-983ec558cfec",
+      "name": "Sticky Note7"
+    },
+    {
+      "parameters": {
+        "content": "# 4. AI Orchestration and Task Execution 🤖\n## This section details the conversational part of the workflow. \n## It's managed by a central AI Agent that acts as an orchestrator, understanding user requests and delegating tasks to a set of specialized tools",
+        "height": 832,
+        "width": 2624,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "position": [
+        -1056,
+        992
+      ],
+      "typeVersion": 1,
+      "id": "9f155eae-7c57-4db0-bc99-e095b495ac5d",
+      "name": "Sticky Note8"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Insert Data": {
+      "ai_tool": [
+        [
+          {
+            "node": "NoSQL_Specialist",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate Data": {
+      "ai_tool": [
+        [
+          {
+            "node": "NoSQL_Specialist",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete Data": {
+      "ai_tool": [
+        [
+          {
+            "node": "NoSQL_Specialist",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find Data": {
+      "ai_tool": [
+        [
+          {
+            "node": "NoSQL_Specialist",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find & Replace Data": {
+      "ai_tool": [
+        [
+          {
+            "node": "NoSQL_Specialist",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find & Update Data": {
+      "ai_tool": [
+        [
+          {
+            "node": "NoSQL_Specialist",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Data": {
+      "ai_tool": [
+        [
+          {
+            "node": "NoSQL_Specialist",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "NoSQL_Specialist",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory1": {
+      "ai_memory": [
+        [
+          {
+            "node": "NoSQL_Specialist",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "SQL_Specialist",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory2": {
+      "ai_memory": [
+        [
+          {
+            "node": "SQL_Specialist",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a record": {
+      "ai_tool": [
+        [
+          {
+            "node": "SQL_Specialist",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a record": {
+      "ai_tool": [
+        [
+          {
+            "node": "SQL_Specialist",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create or update a record": {
+      "ai_tool": [
+        [
+          {
+            "node": "SQL_Specialist",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Delete a record": {
+      "ai_tool": [
+        [
+          {
+            "node": "SQL_Specialist",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Search a record": {
+      "ai_tool": [
+        [
+          {
+            "node": "SQL_Specialist",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update a record": {
+      "ai_tool": [
+        [
+          {
+            "node": "SQL_Specialist",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "CSV Extractor": {
+      "main": [
+        [
+          {
+            "node": "Tabular Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "XLS Extractor": {
+      "main": [
+        [
+          {
+            "node": "Tabular Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "XLSX Extractor": {
+      "main": [
+        [
+          {
+            "node": "Tabular Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Text Extractor": {
+      "main": [
+        [
+          {
+            "node": "Non-Tabular Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PDF Extractor": {
+      "main": [
+        [
+          {
+            "node": "Non-Tabular Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "JSON Extractor": {
+      "main": [
+        [
+          {
+            "node": "Non-Tabular Code",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "CSV Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "XLS Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "XLSX Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Text Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "PDF Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "JSON Extractor",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Tabular Code": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Non-Tabular Code": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Default Data Loader": {
+      "ai_document": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_document",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Recursive Character Text Splitter": {
+      "ai_textSplitter": [
+        [
+          {
+            "node": "Default Data Loader",
+            "type": "ai_textSplitter",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store": {
+      "main": [
+        []
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supabase Vector Store1": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings Google Gemini1": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Supabase Vector Store1",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "NoSQL_Specialist": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "SQL_Specialist": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch1": {
+      "main": [
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "c44084d9-1772-487c-be79-d6ea6ec7f02a",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "7170fb38ceca92c05e8d8dadf2ee8550654b3eec97fcd98e7de058c239638ad4"
+  },
+  "id": "7lU4qzmS8VRb9zJN",
+  "tags": []
+}
